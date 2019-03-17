@@ -57,4 +57,29 @@
 
 ### Lecture 5 Hyperledger Fabric : A DLT for Business Applications
 
+* Fabric is:
+	* a DLT for busines. 
+	* A permissioned BC NW
+	* supports confidential tranactions
+	* no cryptocurrency is used
+	* programmable w/ smart contracts
+* Permissioned NW:  
+	* restricts access and allowed actions on the network
+	* participants must authenticate to some authority that gives permissions
+	* RBAC (role based access control)
+	* transactions are validated by transaction validators that participants trust (subset of participants)
+* Confidential Transactions:
+	* participants control visibility of transactions
+	* partipants can establish private channels to restrict visibility of transactions
+* No cryptocurrency needed:
+	* in ethereum cryptocurrency is used to give incentive to participants to validata transactions
+	* in fabric there is no such need.
+	* participants decide who and how validates
+* Programmable:
+	* using Chaincode AKA smart-contract
+	* chaicode automates business process
+	* build trust4
+
+### Lecture 6 - Assets, Chaincode and Ledger
+
 * 
