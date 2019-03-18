@@ -162,4 +162,13 @@
 
 ### Lecture 11 - Development Machine Specifications & IDE
 
+* Machine Config
+	* >4GB RAM
+	* Mac OS 10.12
+	* Ubuntu Linux 16.04 LTS
+* Visual Studio Code for editor
+* using docker extention and hyperledger composer extention for visual stodio code
+
+### Lecture 12 - Composer Dev Tools Installation
+
 * 
