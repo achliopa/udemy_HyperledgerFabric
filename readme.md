@@ -82,4 +82,55 @@
 
 ### Lecture 6 - Assets, Chaincode and Ledger
 
+* Asset:
+	* represents an object of value
+	* JSON or Binary data format
+* Transactions:
+	* Change on Asset's state
+* Chaincode (Smart COntract):
+	* Defines the assets structure
+	* Defines transactons (Business Logic) e.g `Function sellTheCar(newOwner)`
+* Lenger:
+	* tracks all asset transactions
+	* records asset state changes
+	* is distributed (DLT)
+
+### Lecture 7 - Permissioned Network, Members & Membership Service Provider
+
+* Fabric is a Permissioned Network
+	* Participants need identities assigned
+	* Identities are managed by Membership Service Provider
+* In Real World Businesses interact with known entities (B2B or even identified clients e.g business)
+* Fabric uses RBAC (Role Based Access Control) managed by MSP
+* A Member in a fabric network is a legally separated entity (e.g Car Manufacturer, Car Dealer, Repair Shop)
+* Identities in Fabric is managed through X509 certificates
+* When a participant identity is created a certificate is issed to the particiapnt
+* certiciates are used to sign the transactions
+* infrastructure components in fabric also are assigned certificates (security)
+* members also are assigned certificates
+* Members can manage (create revoke) identities in their organization (paricipants and infrastructure)
+* Hyperledger Fabric can have 1 or more MSPs
+
+### Lecture 8 - Nodes & Channels
+
+* Nodes:
+	* connect to other nodes (mesh) to form the BC network
+	* In ethereum and bitcoin all nodes are equal
+	* are the comunication entities of the BC
+	* they use X509 certs to identify.
+	* identified users use client apps to connect to the network through nodes
+	* they sign transactions. txns signed by an bad cert is rejected
+	* In Fabric all nodes are NOT equal
+		* Peer Nodes keep ledger data in synch across network
+		* Client Nodes Initiate transactions
+		* Orderers are responsible for distribution of transactions
+* Members can participate in multiple HL BC Networks as transactions in each network are isolated
+* This is possible with private Channels:
+	* peers connect to the channel
+	* each channel has its independent ledger
+	* each channel has its own chaincode
+	peers can connect to multiple channels
+
+### Lecture 9 - Hyperledger Fabric Composer Overview
+
 * 
