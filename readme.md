@@ -171,4 +171,20 @@
 
 ### Lecture 12 - Composer Dev Tools Installation
 
-* 
+* We will install Composer tools: CLI, Yo Generator, REST Server
+* For ubuntu follow the [link](https://hyperledger.github.io/composer/latest/installing/installing-prereqs.html#ubuntu)
+* we need node v8.x
+* we need git v2.9 or higher
+* we need python 2.7.x and add Python to PATH
+* we need yeoman using node `npm install -g yo`
+* we install composer cli `npm install -g composer cli` and verify with `composer -v`
+* some packages might fail to install
+* we need Composer REST server `npm install -g composer-rest-server` verify with `composer-rest-server -v`
+* install the Yo Template for the Network App `npm install -g generator-hyperledger-composer` that creates a business network application sceleton. to verify installation use `yo --generators`
+* we need the HL composer moddeling lang extention for vs code
+
+### Lecture 14 - Install Docker or Docker Toolkit
+
+* check installation `docker -v` v>17.3
+* download docker CE stable
+
