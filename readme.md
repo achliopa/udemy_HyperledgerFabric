@@ -133,4 +133,33 @@
 
 ### Lecture 9 - Hyperledger Fabric Composer Overview
 
+* HyperLedger Composer:
+	* Hyperledger Open Development Toolset
+	* It makes easy to Create and Manage Business Network Applications
+	* It aims in accelarating the development o Blockchain apps on Hyperledger
+	* it can be used for business modeling
+	* it hides underlying complexity
+	* chaincode is written in JS
+* There are Composer Tools for:
+	* Dev/Architects
+	* Operations
+	* Administrators
+	* Business Analysts
+* Development Process with Composer
+	* BA creates the Business Network Model using modeling lang
+	* Dev/Architect takes the Business Model and creates the chaincode in JS creating the Business Network APplication
+	* Admin uses the Business Model App to Exec Runtimes using the Composer Tool on Fabric v1.x
+	* Operator uses tools to monitor the health of the network
+* Playgound Tool is used by BA and Devs and is webbased. BC NW is stored in browser
+* It is used for: 
+	* Model Development
+	* Simulated Testing
+* Embedded Env:
+	* Devs can use the Bus Nw App and deploy it in a nodejs embhedded simulator
+	* It enables TDD and Unit testing
+
+### Section 3 - Pre-Requisites for Fabric development
+
+### Lecture 11 - Development Machine Specifications & IDE
+
 * 
