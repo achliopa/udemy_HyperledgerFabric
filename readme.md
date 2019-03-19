@@ -323,4 +323,40 @@ export FABRIC_VERSION=hlfv12
 
 ### Lecture 27 - How to Use teh Dev Tools
 
+* Fabric dev env uses docker. use the [cheat sheet](https://github.com/wsargent/docker-cheat-sheet)
+* with vs docker extension we can run basic commands rom tool
+* Composer tools we will use:
+	* Composer CLI
+	* Composer REST Server
+	* Composer Yeoman
+	* Playground
+	* Composer JS
+
+## Section 6 - Dev Environment Setup overview & Tools usage
+
+### Lecture 28 - Development Environment Topology
+
+* development environment is configured for 1  organization
+* 4 containers are deployed as part of the dev environment
+	* CA-MSP (Cert Auth Membership Ser5vice Provider) 'ca.org1.example.com'
+	* Orderer 'orderer.example.com'. it is a SOLO type Orderer (only 1 for the network) . its OK only for dev purposes
+	* Peer0 'peer0.org1.example.com'. only 1 peer
+	* CouchDB storing state data
+* 'Crypto' folder has cryptographic material (certificates and keys)
+* 'Config' folder has configuration files
+* 'fabric-scripts' folder has shell scripts to operate fabric
+* 2 version groups of fabric are available. all complete with their scripts and composer. they get invoked by main script
+* Containers config is in 'docker-compose.yml'
+* containers need access to the channel config and genesis block. both are in 'ConfigTx' folder
+* to create content for 'Crypto' folder a tool 'cryptogen' is used
+* to create content for 'ConfigTx' folder a tool 'configtxgen' is used
+* in multi org apps each ahas its own CA-MSP
+* there are multiple utility scripts
+	* docker compose
+	* start stop
+	* crypto material regeneration
+	* config (channel | generis block)
+
+### Lecture 29 - Development Environment Scripts
+
 * 
