@@ -223,4 +223,104 @@
 	* workflow automated by using the 'Vagrant' file
 	* vagrant commands use the vagrant file and command Vbox to create the VM
 
-### Lecture 18 - 
+### Lecture 18 - Setting up the Virtual Machine using VirtualBox+Vagrant
+
+* any Ubuntu Linux 14.04/16.04 LTS box is OK
+* Default box: bento/ubuntu-16.04
+* check if vbox is installed on machine `vboxmanage --version`
+* if not install it from [here](https://www.virtualbox.org/wiki/Downloads)
+* check if vagrant is installed `vagrant -v`
+* if not install it from [here](https://www.vagrantup.com/docs/installation/)
+* clone the course vagrant repo from [github](https://github.com/acloudfan/HLF-Vagrant-Dev-Setup)
+* go to where VgrantFile resides. vagrantfile specs the box to be usd , ports etc
+* Typical vagrant commands as seen in [getting started](https://www.vagrantup.com/intro/getting-started/):
+	* `vargant up` starts the VM
+	* `vagrant halt` gracefully shut down the VM
+	* `vagrant ssh` log in to VM
+	* `vagrant destroy` delete the VM
+* vm homedir has a scripts and workspace folder
+
+### Lecture 20 - Installation of Fabric Tools
+
+* Installation of Fabric is done in 3 steps:
+	* Pre-Req Installation
+	* Fabric Tools Installation
+	* Post Install Steps
+* Pre-Req Installation sets up all prereqs on VM:
+	* run `vagrant up`
+	* run `vagrant ssh`
+	* execute pre reqs install script in VM `./scripts/install-prereqs.sh`
+	* run `logout` and login again to vm
+* Fabric Tools Installation installs fabric dev tools + environment
+	* login to vm `vagrant ssh`
+	* execute fabric tools install script `./scripts/install-fabric-tools.sh` 
+	* execute `./scripts/install-composer.sh` ONLY IF we want to run composer on VM (no mixed mode setup)
+	* logout `logout` and login again
+
+### Lecture 21 - Post Installation Steps
+
+* Download fabric docker images
+	* `vagrant ssh`
+	* go to `./workspace/fabric-tools`
+	* give exec rights `chmod 755 *.sh`
+	* in VM execute script for downloading fabric docker images `./downloadFabric.sh`
+	* this mods the .profile in VM home dir
+* after this all fabric images are pulled
+* in Host Machine we need to install Peer Admin Card:
+	* setup the utility. in vagrant repo fodler `cd util` and `npm install`
+	* create the 'PeerAdmin' card `node devutil.js`
+* We are now ready to use Composer tool against our Fabric Dev Environment
+* we will use docker to monitor images on machine.
+	* in '.profile' file set `export DOCKER_HOST=tcp://localhost:2375` to connect to Docker Deamon on VM 
+	* unset `DOCKER_TLS_VERIFY` in same file
+	* run `docker images` on host. we should see images on VM
+* VS Code Docker extension has issues
+* To start HL Fabric after shutdown 
+	* `vagrant ssh` to VM 
+	* run `./startFabric.sh` in VM
+	* in host run `docker ps` to check status and run `docker logs --tail 100 <image name>`
+
+## Section 5 - Native: Hyperledger Fabric Dev Environment Setup
+
+* on VM instance in AWS EC2 Ubuntu Server 14.04 LTS or 16.04 LTS (64bit) on t2.medium machine (2cores, 4GB ram)
+* tag the machine, config security group => open tcp ports SSH and TCP
+* ssh on cloud VM
+* DO NOT install Fabric using root. create a new user
+```
+sudo adduser USER-NAME
+sudo adduser USER-NAME sudo
+```
+* validate user
+```
+su USER-NAME
+whoami
+```
+* go to [HL docs](https://hyperledger.github.io/composer/latest/installing/installing-prereqs.html#ubuntu) for prereqs 
+* download prereqs script
+```
+curl -O https://hyperledger.github.io/composer/latest/prereqs-ubuntu.sh
+chmod u+x prereqs-ubuntu.sh
+```
+* run the script `./prereqs-ubuntu.sh`
+* got to the [install the fabric dev env](https://hyperledger.github.io/composer/latest/installing/development-tools) tutorial on HL docs and follow instructions:
+	* install cli tool `npm install -g composer-cli@0.20`
+	* download fabric
+```
+mkdir ~/fabric-dev-servers && cd ~/fabric-dev-servers
+
+curl -O https://raw.githubusercontent.com/hyperledger/composer-tools/master/packages/fabric-dev-servers/fabric-dev-servers.tar.gz
+tar -xvf fabric-dev-servers.tar.gz
+```
+	* install fabric (download images)
+```
+cd ~/fabric-dev-servers
+export FABRIC_VERSION=hlfv12
+./downloadFabric.sh
+```
+	* check images
+	* start fabric `./startFabric.sh`
+	* run `./createPeerAdminCard.sh`
+
+### Lecture 27 - How to Use teh Dev Tools
+
+* 
