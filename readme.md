@@ -188,3 +188,39 @@
 * check installation `docker -v` v>17.3
 * download docker CE stable
 
+## Section 4 - Virtual Machine: Hyperledger Fabric Dev Environment Setup
+
+### Lecture 16 - Native Vs. Virtual Machine Development Environment
+
+* we can run fabric on VM or Natively
+* Dependency Hell: Frustration caused by installing SW packages that have dependencies on specific versions of other SW packages
+* HL Fabric has a lot of dependencies
+* Native Installation:
+	* Linux Users OK with it.
+	* MAC so-so
+	* Win bad
+* Native Installation:
+	* It takes time to setup (-)
+	* manual installation (-)
+	* version clashes (-)
+	* performance (+)
+* VM installation:
+	* fast installation (+)
+	* automated installation (+)
+	* self contained / managed internally (+)
+	* easy cleanup(+)
+
+### Lecture 17 - Virtual Machine based Hyperledger Dev Setup
+
+* avialable options Oracle Vbox or Vagrant
+* Hypervisor: the Virtualization system that creates and runs VMs
+* Mixed Mode Setup: Vbox + Vagrant VM
+	* On VM: Fabric, Docker, curl
+	* On host: composer, nodeJS vScode editor
+	* Pros: Native Install Experience, No need to log to VM to use the tools
+* Vagrant is a tool for building and managing VM envs in a single workflow
+	* CLI tools for managing VMs
+	* workflow automated by using the 'Vagrant' file
+	* vagrant commands use the vagrant file and command Vbox to create the VM
+
+### Lecture 18 - 
