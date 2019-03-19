@@ -359,4 +359,16 @@ export FABRIC_VERSION=hlfv12
 
 ### Lecture 29 - Development Environment Scripts
 
-* 
+* scripts are usesd to start/stop the env and to preserve the state of dev env among restarts
+* we interact with Fabric dev env through scripts
+* with HL Composer tools we create the Business network archive files and to deploy the Nusiness network application on HL Fabric
+* To launch the Dev Env:
+	* we use `./startFabric.sh`
+	* it kills and removes running containers
+	* all deployed apps are removed
+	* redeployment of apps is needed
+* to shutdown the Fabric Dev Env:
+	* we use `./stopFabric.sh`
+	* kills and removes running containers
+	* all deployed apps are removed
+* if we dont have 'fabricutil.sh' in fabric-tools folder we need to cp it from repo and make it executable. it allows to start stop dev env weout losing teh deployed app
