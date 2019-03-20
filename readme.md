@@ -371,4 +371,117 @@ export FABRIC_VERSION=hlfv12
 	* we use `./stopFabric.sh`
 	* kills and removes running containers
 	* all deployed apps are removed
-* if we dont have 'fabricutil.sh' in fabric-tools folder we need to cp it from repo and make it executable. it allows to start stop dev env weout losing teh deployed app
+* if we dont have 'fabricutil.sh' in fabric-tools folder we need to cp it from repo and make it executable(chmod 755). it allows to start stop dev env without losing teh deployed app
+* with the fabricUtil
+	* first launch `./startFabric.sh`
+	* to stop babric `./fabricUtil.sh stop`
+	* to restart fabric `./fabricUtil.sh start`
+
+## Section 7 - Fabric Under the Hood (Concepts & Terminology)
+
+### Lecture 31 - Ledger Implementation
+
+*  The distributed ledger contains
+	* a transaction log (of all transactions)
+	* state database (keeping current state of assets)
+* Transaction log is Immutable (Create and Retreive)
+* State data is not immutable (Create Retrieve, Updata Delete)
+* Transaction and state updates are done with Chaincode
+* When Chaincode is executed
+	* transactions are created
+	* state crud operations
+* Transaction log => levelDB (embedded in the peer process). we cannot use anther DB e.g Redis
+* State Data:
+	* key-value pairs
+	* asset state is managed with state variables (key-value-version): key is string, value is a BLOB e.g JSON
+	* a new version is created on state updates.
+	* so old state is not deleted. is kept in previous version of asset state
+	* state dta is managed in levelDB
+	* chain code owns the data. only owner chaincode can access tha state data
+* levelDB: supports simple queries, executed against peer
+* business needs complex queries. levelDB cannot handle that
+* state DB is plugable at peer level so it can be repl;aced with couchDB
+
+### Lecture 32 - Dev Environment Walkthrough: Peer & CouchDB setup
+
+* peer image has peer binary installed in it
+* when it starts it reads configuration from the environment
+	* its configured for using levelDB for transaction data
+	* its configured for using couchDB for state data
+* container for couchDB has binary for couchDB + configuration
+* we check the configuration file for peer and couchdb in 'fabric-scrits/hlfv1/composer/docker-compose.yml'
+* peer config `peer0.org1.example.com:` env vars
+	* `CORE_LEDGER_STATE_STATEDATABASE=CouchDB` sets couchDB as state db
+	* `CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb:5984` sets the path to connect with db
+	* `command: peer node start --peer-defaultchain=false` starts the peer container
+	* `ports:` localhost port mapping
+	* `volumes:` volumaping to vm fs
+* commands we can run IN the peer container 
+	* `chaincode` : operate a chaincode  install/instantiate/invoke/package/query/signpackage/upgrade
+	* 'channel' : operate a channel create/fetch/join/list/update
+	* 'logging' : log levels getlevel/setlevel/revertlevels
+	* 'node' : operate a peer node  start/status
+	* 'version' : print fabric peer version
+* using docker extension of vscode => rclick on container => terminal => write command (e.g env to get ENV PARAMS)
+
+### Lecture 33 - Peers Nodes : Anchors and Endorsers
+
+* There are 2 types of peer nodes:
+	* anchor peers
+	* endorsing peers
+* Members in the BC NW need to set up peers in their infrastructure to participate to the NW
+* Peers are complete with cryptokeys and have their own ledger copy
+* Peers receive transaction invokation requests from clients in the organization
+* Peers synchronize their ledgers based on blocks received by the ordering service (Orderers)
+* This architecture is highly scalable (no need for central scale effort)
+* Each organization can scale their infra according to their needs
+* Only Anchor peers in a member org receive the new blocks
+* Anchor peers update other peers ledger (to avoid single point of failure they can be >1 in a cluster)
+* Anchor peers are part of channel config and are discoverable
+* Peers marked as endorsing peers (Endorser) receive transaction invok reqs from clients
+* Endorsing Peers validate the transaction (e.g cert checks). They simulate the chaincode (execute the code but dont save state to ledger)
+* Endorser either rejects the transaction or endorses it
+* Endorser roleis to protect the network (intentional attack, misbehaving or misconfigured nodes)
+* only endorsers need to execute the code => imporved scalability
+
+### Lecture 34 - Clients Node: Endorsement Policies
+
+* Client node is responsible for initiating transactions and acts on behalf of the end user
+* it creates Txn request and sends it to endorsing peer(s)
+* Which peer should be used as endorser? It depends on the chaincode
+* Chaincode defines an Endorsment Policy:
+	* which peers to be used a s endorsers
+	* criteria for valid transaction
+* In our sample Endorsement Policy we have 3 peers that act as endorsers (Peer-1, Peer-2, Peer-3)
+* Endorsing Policy Criteria: number of endorsements needed OR % of endorsements needed
+* Policy supports logical operators AND | OR `OR('Org1.member`, AND('Org2.member, 'Org3.member'))
+* Association of Endorsing Policy is Optional
+* Endorsing policy is specified at the time of deployment of chaincode
+* If not specified the Default policy is: Any 1 Endorsing peer from default MSP/Orgazization can endorse a Tx
+* Recap. to endorse / validate a transaction prior to adding it to the block
+	* are all endorsement valid?
+	* chack criteria: are enough endorsements?
+	* are endorsemetns coming from right sources
+* After validation txn is added to the Txn log as valid or rejected
+
+### Lecture 35 - Orderer Nodes
+
+* Orderers (aka Ordering Service):
+	* provide the communication backbone for HL Fabric
+	* are responsible for creating a consistent ledger state across the NW 
+	* implement the consensus mechanism
+	* ensure order of transactions
+	* create the blocks & guarantee atomic delivery
+	* are implemented on top od Message Oriented Middleware (MOM)
+* For Fabric v1.0 2 MOM options are available
+	* SOLO (single mode = good for development | dev mode) => single point of failure
+	* Apache Kafka (multi node cluster => high throughput, scalability & fault tolerance)
+* Both options support multi-channel and are asynchronous
+* Flow of app:
+	* client broadcasts the endorsed transaction using Orderer (invokes orderers broadcast service)
+	* orderers deliver the block to the anchor peers in organizations
+* Orderer provides comm layer, achieves consensus, keeps order of txn
+
+### Lecture 36 - Membership Service Provider & Certification Authority
+
+* 
