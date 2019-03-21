@@ -484,4 +484,87 @@ export FABRIC_VERSION=hlfv12
 
 ### Lecture 36 - Membership Service Provider & Certification Authority
 
+* MSP is:
+	* an abstract component of the system that provides credentials to clients and peers for them to participate in a HL Fabric BC NW
+	* an alternate implementation may be plugged in without impacting transaction flow
+	* Default MSP implementation is based on PKI (Public Key Infrastructure)
+	* MSP provides 2 main services: authentication & authorization
+* Authentication:
+	* is user/peer cert valid?
+	* is peer allowed to participate?
+* Authorization:
+	* Can this userissue identities?
+	* Can the user deploy chaincode/
+* In PKI idenity management uis done through managing certificates => issue => validation => revocation. CA does this
+* Certifiacation Authority:
+	* is a trusted party that affirms the identity of an entity (aka cert subject) by signing the cert containing the entity's public key
+	* 2 other entities needed for using certificates are Registration Authority 'RA' and Validation Authority 'VA')
+* Certificate Issuance Flow:
+	* user sends a cerificate signing request (he sends the apporpriate documentation to RA)
+	* RA validates idenity and notifies CA to issue a certificate
+	* CA signs the certificate and sends it back to requestor
+	* CA informs VA about the new certificate
+* from now on issed certificates are validated by VA
+* CA in Fabric (issuance and management)
+	* In Fabric a Root Certificate is issued to each member in network
+	* Members in the network manage identities within their organizations
+	* Each member has its own CA authorized to issue certs IN their organization
+	* CA in fabric is implemented as Fabric-CA-Client or Fabric-CA-Server 
+	* The auth admin uses the client to manage certificates on Fabric-CA-Server
+	* Orderer and Peers validate certs with CA-Server
+	* SDK and RestApi also interface with Server regarding certs
+	* CA-Server manages identities and certs in a DB (SQLite). DB is pluggable so MySQL,PostgreSQL or LDAP are other options
+
+### Lecture 37 - Dev Environment Walkthrough: Orderer and CA Server
+
+* in our Fabric Dev Env we have:
+* ORDERER:
+	* runtime in orderer container 'orderer.example.com' reding configuration from the ENV (docker-compose.yml)
+	* in its running container shell we run `orderer version` and see its version
+	* we check avaliable commands with `orderer --help`
+* CA-MSP:
+	* CA-Server & Client runtimes both run in 'ca.org1.example.com' container
+	* server listens to the 7054 port
+	* at startup server starts using cryptofiles from attached volume
+	* in the container shell we can issue commands like:
+	* we can see available commands with `fabric-ca-server --help`. available commands are init and start. many options are available
+	* we can see the options for client with `fabric-ca-client --help`. available commands are: enroll,getcacert,reenroll,register,revoke
+
+### Lecture 38 - Chaincode Development
+
+* Chaincode in Fabric can be written in Go, NodeJS or Java
+* it has 2 parts (Asset Definitions & Transaction Definitions/Implementation)
+* Asset Definitions is the digital representation of an asset. for NodeJS it is defined as part of Business Network Modeling. e.g.
+```
+asset SampleAsset identified by assetId {
+	o String assetId
+	o String value
+}
+```
+* Transaction Definitions/Implementation: They create the Asset and manage the state of the Assets. an example in JS
+```
+transaction ChangeAssetValue {
+	o String newValue
+	---> Asset relatedAsset
+}
+```
+* Transaction Def/Imp performs CRUD operations on Assets
+* The development workflow for Chaincode:
+	* Developer writes chaincode in his workstation in his prefered lang
+	* He compiles and tests the code
+	* he deploys the chaincode to peers using the 'Deploy' transaction
+	* optionally in the Deploy txn developer can bundle the EndorsementPolicy of the chaincode
+	* Delopyment txn is propagated to the whole Fabric network
+	* If successful => txn log and state get updated
+	* participants in the network can use applications using the Fabric API to invoke the chaincode.
+	* chaincode invokations are recorded in the transaction log and state changes in the State DB
+* The Deployment TXn deploys the Chaincode instance in its own container
+* Execution or invokation of chaincode happends in these independent containers (each chaincode has its own runtime env)
+* in our Fabric dev env we can deploy a Business Network Application on Fabric NW using composer cli command `composer network deploy -a ./airlinev8@0.0.1.bna -c PeerAdmin@hlfv1 -A admin -S adminpw`
+* this deploys the compiled chaincode 'airlinev8@0.0.1.bna' which runs as a new docker container 'dev-peer0.org1.example.com-airlinev8-0.16.0'
+
+## Section 8 - Using Composer Tools for Application Development & Administration
+
+### Lecture 40 - Fabric Composer Playground
+
 * 
