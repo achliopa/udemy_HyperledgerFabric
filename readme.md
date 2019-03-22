@@ -1,7 +1,7 @@
 # Udemy Course #1: Blockchain Development on Hyperledger Fabric using Composer
 
 * [Course #1 Link](https://www.udemy.com/hyperledger/)
-* [Course #1 Repo]()
+* [Course #1 Repo](https://github.com/acloudfan/HLF-Vagrant-Dev-Setup)
 
 # Udemy Course #2: Tutorial: Set up Multi Org Hyperledger Fabric Network
 
@@ -163,7 +163,7 @@
 ### Lecture 11 - Development Machine Specifications & IDE
 
 * Machine Config
-	* >4GB RAM
+	* more than 4GB RAM
 	* Mac OS 10.12
 	* Ubuntu Linux 16.04 LTS
 * Visual Studio Code for editor
@@ -175,7 +175,7 @@
 * For ubuntu follow the [link](https://hyperledger.github.io/composer/latest/installing/installing-prereqs.html#ubuntu)
 * we need node v8.x
 * we need git v2.9 or higher
-* we need python 2.7.x and add Python to PATH
+* we need python 2.7.x and add Python to PATH (we have conda python v3.6.4 so use `conda search python` to see all available versions and `conda install python=2.7.16`)
 * we need yeoman using node `npm install -g yo`
 * we install composer cli `npm install -g composer cli` and verify with `composer -v`
 * some packages might fail to install
@@ -566,5 +566,31 @@ transaction ChangeAssetValue {
 ## Section 8 - Using Composer Tools for Application Development & Administration
 
 ### Lecture 40 - Fabric Composer Playground
+
+* we will familiarize ourselves with playground UI
+* Composer Playgound is a web sandbox to which you can deploy. edit and test business network definitions
+* it is available online [at](https://composer-playground.mybluemix.net)
+* we can run it locally for security reasons on Linux and Mac `npm install -g composer-playground@0.20` or if we have issues accessing online playground
+* the landing page is called wallet. it can have multiple tabs for each business application model/networks
+* the default tab allows us to create a model initialized with the sample network definition
+* we can create a new one selecting one of the available templates
+* the user of the playground defines the model. models creates the model in the browser local storage
+* user can also test the model
+* we create a new model: Deploy a new business network => basic-sample-network => deploy
+* after being created we click 'connect now'
+* the model is composed by various files. to see them we hit 'Define' tab
+* in 'README.md' we should document our model
+* in 'Test' tab we can create entities in the sandbox that we have defined in the model
+* we can also create a new participant '+create new participant'
+* all assets and transactions defined in the model are available for testing
+* the model validation rules apply even in playground
+* playground can assist with coding the model
+* the wrokflow using playground is: code the Txns in Playground UI => Download model to Local machine using (export): application archive (.bna) is stored on local machine => user can make changes and use 'Deploy'. to put it back on the Playground use 'import'
+* using playground to code the model can cause problems in a team setup
+* we can do local development with an editor (versioned files) and use playground only for simulated testing
+* we can create the bna files with composer cli. the we upload the bna file to the playground for testing
+* in playground aal are stored in browser => chrome dev tools => applications => storage
+
+### Lecture 41 - [Yeoman](https://yeoman.io/) Hyperledger Generators
 
 * 
