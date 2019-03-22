@@ -1,0 +1,11 @@
+{
+  "name": "test-model",
+  "version": "0.0.1",
+  "description": "test Model Scaffolding",
+  "scripts": {
+    "test": "mocha --recursive"
+  },
+  "author": "achliopa",
+  "email": "athchliopanos@gmail.com",
+  "license": "Apache-2.0"
+}
