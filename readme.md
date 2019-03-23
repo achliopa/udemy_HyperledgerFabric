@@ -603,3 +603,41 @@ transaction ChangeAssetValue {
 * we ran yeoman genrator selecting 'Business Network' naming it 'test-bna'
 * we opt to generate a populated sample network
 * the [Loopback](https://loopback.io/) generator is used for the customization of the REST server
+
+### Lecture 42 - Participant Roles and Business network Cards
+
+* Users in hl network take actions based on their roles
+* business network card contains config info needed by the tools and apps for connecting to the business network apps and fabric infra comps
+* Main roles for BNA are:
+	* Peer admin: carries out activities at infra level (node level). they are created as part of env setup
+	* Network admin:  carries out admin activities at app level. created by peer admin
+* Users can take many roles. roles are defined as part of the BNA model
+* Actions are perfomed based on role
+* Peer admin creates NW Admin => Network admin creates network participants and can authorize them top create new participants
+* there is no 1:1 rel between peer admi and nw admin. there can be 1 peer admin for many network apps each with its own nw admin
+* to carry out actions on bn app user must have the proper role with credentials and way to interact (cli or sdk api to connect to the BNA)
+* the app using sdk must have access to a Business Network Card.
+* The card contains:
+	* Crypto Credentials
+	* Keys & Certs
+	* Composer Connection profile (info how to access CA "https://..." and how to access the Peers "grpcs://....")
+* A user can have multiple such cards on their machine to connect to different busines networks
+* Cards are stored in the users fs "~/.composer/" in "/cards" folder as folders e.g '/PeerAdmin@Node-Name' or '/NetworkAdmin@BNA-Name'
+* Key files and certificates are stored in '/client-data'
+* Card name is composed by user id + @ + node or app. in  the card folder we will find:
+	* 'connection.json' containing connection realted info
+	* 'metadata.json' contaning
+	* '/credentials' subfolder with crypto credentials (cert  and private key)
+* connection.json contains:
+	* urls for ca, orderer and peers , channel and msp id
+* metadata.json contians:
+	* username and roles
+* cards are managed by Composer cli
+	* `composer card --help` lists commands (list, create, delete, )
+	* `composer card create --help` lists the params we need to pass to create a card
+	* `composer card delete -c <cardname>` deletes the card
+	* `composer card export -c <cardname -f <filename>` exports the card as file we can import with `composer card import` command
+
+### Lecture 43 - Composer CLI Tool - Deploying a Network Application
+
+* 
