@@ -10,6 +10,8 @@
 
 # Course 1 - Blockchain Development on Hyperledger Fabric using Composer
 
+**NOTE:** HL Composer v0.19 with HL Fabric v1.1 , HL Composer v0.20 with HL Fabric v1.2
+
 ## Section 1 - Introduction
 
 ### Lecture 3 - What is Hyperleder?
@@ -640,4 +642,44 @@ transaction ChangeAssetValue {
 
 ### Lecture 43 - Composer CLI Tool - Deploying a Network Application
 
-* 
+* we can see composer cli tool available commands with `composer --help`:
+	* `composer archive` creates an archive we can deploy on fabric or playground
+	* `composer network` executes network actions like deploying
+* we will see cli in action doing the following actions:
+	* create a new BNA file for testing
+	* deploy BNA to Playground
+	* deploy BNA to local Fabric setup
+* we launch yeoman generator `yo hyperledger-composer`
+* select Business Network and use defaults to crerate 'test-bna' with sample network
+* in '/test-bna' we add a folder '/dist' to add an archive
+* in '/test-bna/dist' we run `composer archive create -t dir -n ../` seting teh type of files to add and the location (directory at /test-bna) using default name (no -a option)
+* 'test-bna@0.0.1.bna' is created... we can import it to playground or deploy it in fabric
+* defualt name is composed by info in test-bna 'pacjage.json' file
+* in playground we choose: Deploy a new network => drop here to uplode or browse. we choose it name it and deploy it
+* we connect to it
+* To deploy to fabric we need to:
+	* Launch fabric network `./startFabric.sh` in VM
+	* verify / create the PeerAdmin Card `./createPeerAdminCard.sh` on Host
+	* install the BNA archive to fabric using composer cli: in the folder of the archive file we run `composer network install -a test-bna@0.0.1.bna -c PeerAdmin@hlfv1` passin in the card name and file name
+	* start BNA on fabric `composer network start -c PeerAdmin@hlfv1 -n test-bna -V 0.0.1 -A admin -S adminpw` creates the NetworkAdmin card on the local file system. the card needs to be deployed to the network admins machine to carry on nw admin actions. in the command we pass admin usernamme and password as _A and -S options together with network ids
+* the new card 'admin@test-bna.card' is created in PWD and we can deploy it to the nw admin machine using `composer card import --help` e.g `composer card import -f ./admin\@test-bna.card` to see the apropriate options and veruify with `composer card list `
+
+### Lecture 44 - Composer CLI Tool - Network Application Management
+
+* we can use `compose network ...` to perform actions on a deployed network. e.g. deploy,download,list,undeploy,updata,upgrade, ping ...
+* we gan 'ping' the nw to check this status. prereq is to have the Nwadmin card
+* `composer network  list` logs out the details of all nw registries
+* to issue network commands we need to add a ref to the nw admin card `composer network ping -c admin@test-bna`
+* to get info from fabric peers regardin teh network `composer network list -c admin@test-bna`
+* to upgrade the BNA on fabric we need to:
+	* Create an archive for the new version of the BNA
+	* install the new version of archive `composer network install ...`
+	* list the network app `composer network upgrade ...`
+* we create a new BNA:
+	* in '/test-bna/package.json' we change `"version": "0.0.2",`
+	* we run the archive commnad in dist `composer archive create -t dir -n ../`
+	* we deploy the new file with install passing peeradmin card `composer network install -a test-bna@0.0.2.bna -c PeerAdmin@hlfv1`
+	* we upgrade the bna with `composer network upgrade -c PeerAdmin@hlfv1 -n test-bna -V 0.0.2`
+	* we ping the network to see the change `composer network ping -c admin@test-bna`
+
+### Lecture 46 - REST Server Overview
