@@ -766,4 +766,29 @@ transaction ChangeAssetValue {
 
 ### Lecture 49 - Composer SDK Overview
 
+* Composer SDK can be used to develop full stack apps on top of HL Fabric DLT
+* SDK is avialble as npm modules to integrate in a JS app
+	* Client module: hides protocol details
+	* Admin module: automation of admin tasks
+	* Common module: cpmmon interfaces
+	* Runtime module: container env for chaicode
+* all modules expose an api
+* Clent Module is used in a JS app to connect to Fabric. credentials must be passed in the module. the app then can:
+	* execute CRUD ops on assets
+	* submit txns
+	* subscribe to events
+* alternative the js app  w/ client npm module can expose rest apis to a frontend app
+* a js app w/ admin module is typicala tool and utility to carry out admin tasks like:
+	* deploy/update BNapp
+	* manage cards
+	* ping the app
+* Runtime module provides node js container to running bna. an external js app executes chaincode through the runtime api to:
+	* execute crud ops on assets
+	* implement business logic
+	* emit events
+
+## Section 9 - Business Network Application Modelling
+
+### Lecture 50 - Case Study: ACME Airlines
+
 * 
