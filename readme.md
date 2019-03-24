@@ -724,4 +724,46 @@ transaction ChangeAssetValue {
 
 ### Lecture 47 - REST Server Security
 
+* in our current config anyone who knows the REST server url can acces and use the API
+* we should use TLS ans authentication to secure it
+* REST server uses passport.js for authentication
+* to connect REST server user presents credentials and protocol according to passport auth strategy. NOT the blockchain identity
+* token is attached to HTTP req
+* rest server can use tls security for https
+* rest server was configured with PeerAdmin card
+* all reqs hitting fabric from rest server no matter whois the authenitated user (with passport) will use the peeradmin  card
+* this is a threat
+* ideally the txns should be signed with users own identity
+* the solution is Multi User Setup
+	* rest server is launced with launch idenity
+	* we configure rest server to authenticate the callers. each callr sets up a wallet on rest server (connection profile) containing id and user keys
+	* when user invokes API. rest srvr authenticates user and assignts to it the blockchain identity info linked to it from his wallet
+* Implement MultiUser Setup only when users can TRUST the rest server to manage their private keys
+
+### Lecture 48 - Skeleton Angular Application using Yo
+
+* we can use yeoman hl composer generator to create a sceleton frontend app with AngularJS
+* the proposed architecture is 3 tier Frontend + Composer+RESTserver + Fabric
+* angular sceleton app is based on v2 and typescript
+* we can use composer sdk directly (no rest http) to connect to fabric
+* mid tier (compsoer rest server) is optional. a custom nodejs + composer sdk mid tier is possible
+* 3 tier app is quick to implement, standardized, easy to test
+* Securing composer rest server is a challenge
+* fast track:
+	* `./startFabric.sh`
+	* `composer-rest-server`
+	* `yo hyperldeger-composer:angular`
+* Walkthrough:
+	* launch fabric runtime
+	* deploy the BNA 
+	* lauch composer-rest-server with nw admin card
+	* `yo hyperldeger-composer:angular`
+	* start it `ng server`
+* we start angular generator passing in the admin card naming it 'angular-test'
+* By default the angular app is not picking up the proxy defined in "proxy.conf.js" file. This is the file where the proxy is set for the root "/api" i.e. REST server. In order to route api calls through proxy we need to start the angular application using proxy flag and the proxy config file.
+* we `cd angular-test` and run `ng serve --proxy-config proxy.conf.js` (we need to install angular cli first `npm install -g @angular/cli`)
+* our frontend app is live at 'http://localhost:4200/'
+
+### Lecture 49 - Composer SDK Overview
+
 * 
