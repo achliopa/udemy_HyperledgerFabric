@@ -683,3 +683,45 @@ transaction ChangeAssetValue {
 	* we ping the network to see the change `composer network ping -c admin@test-bna`
 
 ### Lecture 46 - REST Server Overview
+
+* Nusiness Model is all about assets (resources)
+* Transactions make changes to the state of these resources
+* REST API is a good fit to operate CRUD ops on assets
+* Composer REST server: Standalone NodeJS process that exposes the Business Network  (Resources or Assets) as REST API.
+* REST Server sits utside of fabric and uses composer cli internally tyo manipulate the deployed Business Network App in Fabric
+* once started user hits from a browser or from frontend app its URL 'http://localhost:3000/explorer'
+* A frontend app can do CRUD operations and invoke model TXns in Fabric using the API
+* to invoke the server `composer-rest-server` passing some options like: card to use, port, tls etc. options can be set in propmpt if we run just `composer-rest-server`
+* of course HL Fabric must be running a lso our app must be running (use the util script to avoid shutdown)
+* we launch using 'admin@test-bna` 
+* the sample model we use has only two resources (SampleAsset and User)
+* the web app offers a UI to manipulate assets. we create anew asset wth POST passing in 
+```
+{
+  "$class": "test.SampleAsset",
+  "assetId": "ID-1",
+  "owner": "test-it",
+  "value": "2000"
+}
+```
+* we call GET and get it back. or get it by ID
+* we can also execute RESTful commands on transaction
+* we can issue a txn using POST passing in
+```
+{
+  "$class": "test.SampleTransaction",
+  "asset": "ID-1",
+  "newValue": "1000",
+  "timestamp": "2019-03-24T11:49:23.019Z"
+}
+```
+* it gets an id and mods the asset value
+* we aslo et a system API geting the ledger txn history and other
+* REST server pros:
+	* easy access to the NW resources specs
+	* devs can use it to: explore,test, view txn
+	* app code using it is simpler and easy o maintain
+
+### Lecture 47 - REST Server Security
+
+* 
