@@ -925,4 +925,90 @@ concept Contact {
 
 ### Lecture 54 - Modeling Arrays
 
+* we create a new version v3 cping v2
+* ACME airline offers flights US domestic routes. 
+* Each route is identified by the Airport codes and is part of the flight definition e.g Flight101, ROute = EWR to HOU
+* each flight has a unique id. a route can be served by different flights within the day each with a different id number.
+* each flight offers many seats for reservations
+* ACME operates many aircrafts, each of which is alocated to a flight
+* a route can be served by a different aircraft
+* we add a new namspace and file 'org.acme.airline.flight'
+* we define the Route concept
+```
+concept Route {
+  o String origin
+  o String destination
+  o DateTime schedule
+}
+```
+* we define the Flight asset
+```
+asset Flight identified by flightNumber {
+    o String    flightNumber
+    o Route     route
+}
+```
+* Acme flight codes have the pattern 'AE001'
+* Acme shares seats in its flights with other airlines e.g Budget Aier sells tickets for its flight BU476 sharing seats on the AE101 flight
+* Its common for multiple airlines to buy seats on a flight and sell them using their flight number, these flights are nothing more than an alias for the main flight
+* Arrays are declared with [] notation e.g Integer[]
+* We can create an Array of any type (concept)
+* we add a new field in our FLight asset ` o String[]  aliasFlightNumber`
+
+### Lecture 55 - Registries & Relationship between Resources
+
+* Learning concepts: 
+	* Registries are the runtime component that mamnages instances of assets and participants
+	* 'Import' statements allows us to refer to resources defined on another namespace (file)
+	* A relationship between resources can be defined
+* we cp v3 to v4 and will extend our model to establish the relationship between flight and aircraft
+* Registries: Manages instances of resources created at runtime
+	* Each instance has a unique identity (key)
+	* There is a searate registry for each resource type (much like document collections in MongoDB)
+* Relationships between assets and or participants (resources) are depicted in teh model with --> notation, much like a reference or pointer to a specific asset type
+* relaionships are per type not instance. much like the MongoDB schema.. 
+* they havea name `--> AssetA PtrToA`. they can point to any instance of assetAssetA but not asset AssetB
+* such a realtionship is between flight and aircraft. an aircraft is assigned to a flight
+* To refer resources across namespaces we use 'import'
+* we can import a Single resource or all resources in a namespace (*)
+* we import Aircraft in flight.cto `import org.acme.airline.aircraft.Aircraft`
+* we define the relationship in Flight asset `--> Aircraft  aircraft optional`
+* we need to provide the value for a relationship field in a specific format. it requires a fully qualified resource name & identity "relationship_name: "namespace.Asset" #<ID>" e.g `"aircraft": "org.acme.airline.aircraft.Aircraft: #CRAFT001"`
+* As our model becomes more complex its difficult to test it in playground by adding files one by one
+* we need to use the CLI tool to create the archive file and then deploy it to playground. (use dist folder and command `compose archive ...`) e.g run `composer archive create -a dist/airlinev4.bna --sourceType dir --sourceName .` from the project root folder
+* in playground we create a new business network uploading the bna file. we connect to the network for testing
+* in Test assets and participants are there
+* we create an Aircraft instance like before
+```
+{
+  "$class": "org.acme.airline.aircraft.Aircraft",
+  "aircraftId": "CRAFT001",
+  "ownershipType": "LEASED",
+  "firstClassSeats": 10,
+  "businessClassSeats": 20,
+  "economyClassSeats": 100
+}
+```
+* and a flight with no aircraft associated
+```
+{
+  "$class": "org.acme.airline.flight.Flight",
+  "flightNumber": "AE001",
+  "route": {
+    "$class": "org.acme.airline.flight.Route",
+    "origin": "EWR",
+    "destination": "SEA",
+    "schedule": "2019-03-25T19:11:26.491Z"
+  },
+  "aliasFlightNumber": [
+    "BU456"
+  ]
+}
+```
+* we add a reference to aircraft instance in fligh instance using the notation `"aircraft": "org.acme.airline.aircraft.Aircraft#CRAFT001"`
+* if the refernce to the resource is deleted in an aset update (e.g if the aircraft asset instance CRAFT001 gets deleted) the refernce will return null
+* Relationships are unidirectional . in our case FLight -> Aircraft. if flight is deleted  aircraft is ok with that
+
+### Lecture 56 - Adding the field Validations
+
 * 
