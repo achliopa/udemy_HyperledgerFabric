@@ -885,4 +885,44 @@ enum Ownership {
 
 ### Lecture 53 - Support for Object Orientation
 
+* Composer Modeling Lnaguage supports Object Orientation using 3 main concepts:
+	* Abstraction: 'abstract'
+	* Inheritance: 'extends'
+	* Association: 'concept'
+* Resources marked as 'abstract' cannot be instantiated (created) but can be inherited (extended)
+* When we create anew resource by extending an abstract resource, the new resource must be the SAME type as the ancestor e.g if `participant ACMEParticipant abstract` and ACMENetworkAdmin extends ACMEParticipant is must be of type  'participant' `participant ACMENetworkAdmin extends ACMEParticipant`
+* We can extend abstract and concrete classes
+* Multiple inheritabce is NOT supported (we can extend only 1 class)
+* we  create a new model folder 'airlinev2' cping the v1
+* in v2 we add a new namespace and file 'org.acme.airline.participant.cto' adding `namespace org.acme.airline.participant`
+* we add an abstract resource definition and 3 concrete resource classes that extend it
+```
+abstract participant ACMEParticipant identified by participantKey {
+  o String participantKey
+}
+participant ACMENetworkAdmin extends ACMEParticipant {
+}
+participant ACMEPersonnel extends ACMEParticipant {
+  o String department
+}
+participant B2BPartner extends ACMEParticipant { 
+}
+```
+* Modeling Lang offers a contruct called 'Concept'. It is away to define concrete generic classes
+* Concept classes are different than resources. A concept class DOES NOT represent a resource
+* They are used to group together related fields and reuse them in multiple resource classes or even othjer concept classes without repeating code (DRY) . e.g an Address Concept
+* Instances of concepts are contained in resource classes. they CANNOT Be Instantiated as is
+* Concept can be concrete or abstract and is extendable
+* concept definition
+```
+concept Contact {
+  o String fName
+  o String lName
+  o String email
+}
+```
+* constant instantiation in a resource as field `  o Contact contact`
+
+### Lecture 54 - Modeling Arrays
+
 * 
