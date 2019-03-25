@@ -1048,4 +1048,60 @@ asset Flight identified by flightId {
 ```
 ### Lecture 58 - Modeling the Transactions
 
+* domain model should have the definitions of all transactions
+* when transactions are executed events are emitted. events mst be defined as well
+* we cp model v6exercise to v7
+* Transactions: Actions that participants can take on assets
+* in model txns are treated as resources
+* when a tranaction gets executed by a participant. the state of an asset changes
+* All transactions are recorded in the ledger so state of asset may be recreated by replaying the transactions
+* In Acme irlines the logostics department may schedule a flight. this will create some assets (seats that customers can reserve). The travel agent can reserve a seat, B2B partners can block some seats to sell to their customers. End customers can select a specific seat once they have paid their ticket
+* a transaction resource does not need the identified by keyword. they get a TransactionId assigned automatically as they get appended to the ledger. also they get a Timestamp recording the time of execution
+* Participants execute transactions and transactions emit events. events can be received by subscriber applications. e.g a travel agent app would like to know as soon as a new flight gets scheduled to start selling tickets: Acme => {Create Flight} => {Event: FlightCreated} => Agents is ntotified
+* An event can have multiple subscribers
+* Events are defined as part of the model using the 'event' keyword. they dont need identified by. they get an eventId automatically and a timestamp upon emission
+* we add the transaction and event definition to the model (theyr signature) in model language format
+```
+// Logisitcs department of ACME creates the flights
+transaction CreateFlight {
+  o String    flightNumber
+  o String    origin
+  o String    destination
+  o DateTime  schedule
+}
+
+event FlightCreated {
+  o String flightId
+}
+```
+* the transaction logic is coded in JS. the txns js files are placed in the lib directory. 
+* annotations in JS are used to connect the code to the model e.g 
+```
+/**
+ * Create Flight  Transaction
+ * @param {org.acme.airline.fligh.CreateFlight} flightData
+ * @transaction
+ */
+function createFlight(flightData){
+
+}
+```
+* annotations are defined as comment block defore the transaction JS function
+* @param defines the annotation for the transaction in the model. it is followed by a full reference to the transaction in the model
+* flightData encapsulates all transation parameters set in the model
+* param name in annotation must match the one in JS function
+* the JS function  typically uses component SDK APIs
+* Historian: is an asset registry to record all successful transactions
+* Assets contained in the Historian are system defined  asset models 'HistorianRecord'
+* Historian tracks system transactions and user  defined transactions. its records may be queried
+* we deploy the archive with the implemented transaction
+* we create a new transaction. its record comes from teh historian
+* an event is also emitted
+
+### Lecture  59 - Exercise: Fix the code for generating the FlightId
+
+* 
+
+### Lecture 60 - Queries
+
 * 

@@ -1,0 +1,11 @@
+{
+  "name": "airlinev7ex",
+  "version": "0.0.1",
+  "description": "this is the airlinev7 exercise model",
+  "scripts": {
+    "test": "mocha --recursive"
+  },
+  "author": "achliopa",
+  "email": "athchliopanos@gmail.com",
+  "license": "Apache-2.0"
+}
