@@ -791,4 +791,48 @@ transaction ChangeAssetValue {
 
 ### Lecture 50 - Case Study: ACME Airlines
 
+* A fictional case study to show the fabric workflow
+* acme airline facing 2 issues:
+	* Unhappy partners: no visibility into commission payments, stale info, outdated system
+	* customer dissatisfaction: unexpected flight delays and cancels, lost reservations, staff is misinformed
+* Looking for a technology offering: seemless collaboration platform with no boundaries
+* Solution: leverage HL Fabric to create a BN that would enable efficient B2B collaboration leading to better customer experience
+* Parters will have access to info: 
+	* Flight Data
+	* Reservations, 
+	* Logistics
+	* transactions
+	* payments
+	* commissions
+	* rewards
+	* partner contracts
+	* workflows
+* Multiple BNs in the long term
+
+### Lecture 51 - Modeling Language Files | Namespace
+
+* Composer Modeling Language: An OO lang for defining the domain model for the business network
+* Even a BA can use it (feels like natural lang)
+* A business domain model defines the representation of:
+	* participants
+	* assets
+	* transactions
+	* events coming from txns
+* BNM files are '*.cto'
+* in a model file we first define the 'namespace' which applies to all resources defined in the file
+* next in the file resources are defined (assets,participants, txns, events)
+* importing resources from other files is possible (a model can be spread in multiple files)
+* namespaces have to be unique across files
+* naming convention '<namespace>.cto'
+* 'System' namspace is reserved and contains base definitions of resources (abstract resource classes)
+* ACME Airline Domain Model v1 (3 files):
+	* 'org.acme.airline.aircraft.cto'
+	* 'org.acme.airline.flight.cto'  
+	* 'org.acme.airline.participant.cto'
+* we use `yo hyperledger-composer` => Model => name: 'airlinev1' => namespace: 'org.acme.airline.aircraft'
+* a folder is created containing the model folder (with .cto file) and package.json
+* we open '/arilinev1/models/org.acme.airline.aircraft.cto' and delete all sample resources leaveing only namespace
+
+### Lecture 52 - Defining the Resources
+
 * 

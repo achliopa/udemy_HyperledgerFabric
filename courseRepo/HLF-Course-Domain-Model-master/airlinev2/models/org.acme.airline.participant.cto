@@ -1,0 +1,60 @@
+namespace  org.acme.airline.participant
+
+abstract participant ACMEParticipant identified by participantKey {
+  o String          participantKey
+  o Contact         contact
+}
+
+concept Contact {
+  o String fname
+  o String lname
+  o String email
+}
+
+participant ACMENetworkAdmin extends ACMEParticipant {
+  /** This is a concrete resource definition */
+}
+
+participant ACMEPersonnel extends ACMEParticipant {
+  o String  department
+}
+
+participant B2BPartner extends ACMEParticipant {
+  /** Additional Attributes */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * Test Data
+
+{
+  "$class": "org.acme.airline.participant.ACMEPersonnel",
+  "participantKey": "john",
+
+  "contact": {
+    "fname": "John",
+    "lname": "Doe",
+    "email": "john@doe.com"
+    },
+
+  "department": "Logistics"
+}
+
+ */
