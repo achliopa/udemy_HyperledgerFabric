@@ -1011,4 +1011,41 @@ asset Flight identified by flightNumber {
 
 ### Lecture 56 - Adding the field Validations
 
+* composer modeling language uses regex for validation
+* we cp our model to v5. we will add regex validation for flight names and range validation for number of seats in a flight
+* Composer runtime performs validation on field content (no complex business rules)
+* Validation is done on format using regular expressions using keyword 'regex=' for String or range of number with keyword 'range=' for Number
+* Regex usines a formal validation pattern. there are available patterns for standard uses
+* Airport code is standard (3 letters all capital) regex is `regex=/[A-Z][A-Z][A-Z]/`
+* we can use regex [webtool](https://regex101.com) to test against an expression
+* number validation applies to Double,Long and Integer and we check the vlaue agains a range e.g `range=[100,]` accepts any mumber from 100 and above
+* we archive and upload the model to playground to test validation
+* playground does not allow us to create an instance if validation rules are not satisfied
+
+### Lecture 57 - Resource Registries & Identities +Exercise
+
+* we cp to v6 for the exercise
+* all resources must have a unique identity in a business network
+* the id field is what we spec as 'identified by'
+* resourcesa re maintained in registries
+* if we try to create a new resouce instance in the registry with the same ID as an existing one of same type. BN wil throw an error e.g. 'Error: Failed to add object with ID 'CRAFT001' as the object already exists'
+* each flight the company fies is an asset witha unique ID. flights with same ID are scheduled normally in consequtive dates. if an operator tries to adda new instance of same route same id and another date it will get an error
+* we will adjust the model so that same flight# can be used in multiple days
+* we will add a new field as flightID instead of flightNum. the format will be flighnum (5chars)-date(MM-DD-YY) e.g 'AE101-04-01-18
+* For the exercise:
+	* Add another field [String flightId] to Flight model
+	* Change the identified by to flightId
+	* setup a regex to validate flightId
+	* try it out in playground
+```
+asset Flight identified by flightId {
+    o String      flightId regex=/[A-Z]{2}\d{3}-[0|1]\d-[0|1|2|3]\d-\d{2}/
+    o String      flightNumber
+    o Route       route
+    o String[]    aliasFlightNumber
+    --> Aircraft  aircraft optional
+}
+```
+### Lecture 58 - Modeling the Transactions
+
 * 
