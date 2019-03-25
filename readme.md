@@ -835,4 +835,54 @@ transaction ChangeAssetValue {
 
 ### Lecture 52 - Defining the Resources
 
+* we will add an asset in our model
+* the simplest model would have one asset and one participant definition both with multiple uniquely identified instances
+* when defining an asset OR participant  we need to define the id field.
+* a boilerplate aircraft asset definition
+```
+asset Aircraft identified by aircraftId {
+  o String aircraftId
+}
+```
+* Composer Modeling lang supports many primitive types for attributes:
+	* String
+	* Double
+	* Integer
+	* Long
+	* Datetime (ISO-8601 comp time instance)
+	* Booolean
+* we add 3 more attributes to our asset
+```
+  o Integer firstClassSeats
+  o Integer businessClassSeats
+  o Integer economyClassSeats
+```
+* the Composer Modeling lang suppoorts enumerations: List of constant values that may be assigned to afield as value. Data is validated against the 'enum' values. 
+* 'enum' is used to declare enumeration types
+```
+enum Ownership {
+  o LEASED
+  o OWNED
+}
+```
+* it then can be used as attribute: `o Ownership ownershipType`
+* by default value for all declared fields in a definition is required. otherwise we must use the keywork 'optional' `  o String nickName optional`
+* we may initialize a filed with a value (we must use the keyword 'default') `  o Ownership ownershipType default="LEASED"`
+* we start the composer playground `composer-playground -p 3001` => Deploy a new business network => name: 'test1' => template: 'empty-business-network' => Deploy
+* we connect => Define => Model File: => name 'org.acme.airline.aircraft' => cp code from editor => Deploy
+* Go to Test => Create a New Asset => enter data
+```
+{
+  "$class": "org.acme.airline.aircraft.Aircraft",
+  "aircraftId": "CRAFT001",
+  "ownershipType": "LEASED",
+  "firstClassSeats": 10,
+  "businessClassSeats": 20,
+  "economyClassSeats": 100
+}
+```
+* => Create New. We now have oone Asset in playground
+
+### Lecture 53 - Support for Object Orientation
+
 * 
