@@ -1100,8 +1100,112 @@ function createFlight(flightData){
 
 ### Lecture  59 - Exercise: Fix the code for generating the FlightId
 
-* 
+* generateid function
+```
+function generateFlightId(flightNum, scheduleDate) {
+    const date = new Date(scheduleDate);
+
+    return `${flightNum}-${date.getMonth() + 1}-${date.getDate()}-${date.getFullYear() % 100}`;
+
+}
+```
+* function call ` var flightId = generateFlightId(flightData.flightNumber, flightData.schedule);`
+* Testing Steps
+* start fabric `./startFabric.sh`
+* Change the directory to airlinev7 dist subfolder	`cd dist`
+* Create the archive `composer archive create  --sourceType dir --sourceName ../`
+* Install the BNA `composer network install -a .\airlinev7@0.0.1.bna -c PeerAdmin@hlfv1`
+* Start the BNA `composer network start -c PeerAdmin@hlfv1 -n airlinev7 -V 0.0.1 -A admin -S adminpw`
+* Import the card that was generated
+```
+composer card delete -c admin@airlinev7
+composer card import -f ./admin@airlinev7.card
+```
+* List out the network apps for this card `composer network list  -c admin@airlinev7`
+* ping `composer network ping -c admin@airlinev7`
+* list `composer network list -c admin@airlinev7`
+* Launch REST Server `composer-rest-server -c admin@airlinev7 -n never`
+* NOTE when we deploy transactions that use Composer Modules nwe need to add them to the package json
 
 ### Lecture 60 - Queries
+
+* resource data are managed in registries and registries can be queried
+* we cp v7 to v8
+* we download [HLF-Fabric-API](https://github.com/acloudfan/) for testing 
+* it has a util folder with generateFlights.js to generate test data
+* THe resources defined in the model are managed in apersistent store. they can be queried at runtime using the Composer Query lang.
+* Composer Query Lang is like SQL
+* we can issue complex queries like 
+	* How many seats are avaialble on AE102 at May12
+	* get all flighs from NEwark on May12
+* There are 2 types of queries: Named and Dynamic
+* Named Query:
+	* Defined as Part of the Business Network Model
+	* Exposed as REST API by composer-rest-server component
+* Dynamic Query:
+	* Constructed dynamically @runtime
+	* Using Composer API in Transaction processor function or in the client code
+* In this lecture we will work with named queries
+* All named queries are defined in a single file called queries.qry
+* we start query with keyword 'query'. in {} we set:
+	* description: provides the description of the query
+	* statement: using composer query language
+* query (sql like) statement is composed:
+	* SELECT (mandatory operator, defines the Registry & Asset or Participant type) `SELECT org.acme.airline.flight.Flight`
+	* FROM (optional operator, defines a different registry to query)
+	* WHERE: optional operator, defines the conditions to be applied to the registry data e.g `WHERE (flightNumber -- _$flisht_number)`
+	* AND , OR (logical operators) e.g `WHERE (route.origin == _$origin_airport AND route.destination == _$destination_airport)`
+	* LIMIT: optional operator, defines the max num of resutls to return from a query, default limit = 25
+	* SKIP: optional operator, defines the num of results to skip
+	* ORDER BY: optional operator, defines the sorting of results ASC or DESC e.g `ORDER BY [flightNumber ASC]`. 
+	* CONTAINS: optional operator , applies to array attribute
+* query lang supports params:
+	* uses the `_${param-name}` syntax
+	* only primitive types are allowed (no concepts) e.g `$flightNumber`
+* To test the named queries file in the model after deploying the model to fabric we launch rest-server ` composer-rest-server -c admin@airlinev8 -n always -w true -p 3001`
+* to test the query we need to populate the resistries with record data using the util:
+	* in 'HLF-Fabric-API' from course repo we `npm install` and `node util/generateFlights.js`
+	* in rest-server we execute the queries passing sample dta (peek in data generation js file)
+
+### Lec 61 - Exercise: Add a set of aircraft queries
+
+Exercise
+
+* In  this exercise you need to add a query to the airlinev8 model and execute it in the REST Browser.
+* Create a query that would return all aircrafts
+```
+query AllAircrafts {
+  description: "Returns all aircrafts in the registry"
+  statement:  
+    SELECT  org.acme.airline.aircraft.Aircraft
+}
+```
+* Create a query that would return aircraft with specific ownership types
+```
+query AircraftsOwnership{
+  description: "Returns all aircrafts based on ownership type"
+  statement:  
+    SELECT  org.acme.airline.aircraft.Aircraft
+      WHERE ownershipType == _$ownership_type
+}
+```
+* Create a query that would return aircraft with criteria:
+       * count of firstClassSeats >= x
+       * count of businessClassSeats >= x
+       * count of economyClassSeats >= x
+```
+// Selects aircrafts based seating configuration
+query AircraftsSeatConfiguration{
+  description: "Returns all aircrafts based on seats"
+  statement:  
+    SELECT  org.acme.airline.aircraft.Aircraft
+      WHERE (firstClassSeats >= _$firstClass_seats 
+        AND businessClassSeats >= _$businessClass_seats
+        AND economyClassSeats >= _$economyClass_seats)
+}
+```
+* we upgrage arilinev8 network to v0.02
+
+### Lecture 62 - Managing identities for Network Applications
 
 * 

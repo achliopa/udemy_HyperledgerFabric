@@ -15,3 +15,15 @@ concept Route {
   o String destination  regex=/[A-Z][A-Z][A-Z]/
   o DateTime schedule
 }
+
+// Logisitcs department of ACME creates the flights
+transaction CreateFlight {
+  o String    flightNumber
+  o String    origin
+  o String    destination
+  o DateTime  schedule
+}
+
+event FlightCreated {
+  o String flightId
+}

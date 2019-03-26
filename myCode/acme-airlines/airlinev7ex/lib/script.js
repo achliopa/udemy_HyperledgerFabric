@@ -1,3 +1,10 @@
+function generateFlightId(flightNum, scheduleDate) {
+    const date = new Date(scheduleDate);
+
+    return `${flightNum}-${date.getMonth() + 1}-${date.getDate()}-${date.getFullYear() % 100}`;
+
+}
+
 /**
  * Create Flight Transaction
  * @param {org.acme.airline.flight.CreateFlight} flightData
@@ -14,7 +21,7 @@ function createFlight(flightData) {
             var NS = 'org.acme.airline.flight';
 
             // 3. Create the Resource instance
-            var flightId = 'AE102-05-12-18';  /// <<<< THIS IS HARD CODED - FIX IT as an exercise
+            var flightId = generateFlightId(flightData.flightNumber, flightData.schedule);
 
             var flight = factory.newResource(NS, 'Flight', flightId);
 
