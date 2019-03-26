@@ -25,7 +25,7 @@
     cardStore : require('composer-common').FileSystemCardStore,
     BusinessNetworkConnection : require('composer-client').BusinessNetworkConnection,
     // Used for connect()
-    cardName : "admin@airlinev7",
+    cardName : "admin@airlinev9",
    
     // Holds the Business Network Connection
     connection: {},

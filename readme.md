@@ -1512,4 +1512,55 @@ var cardType = {
 
 ### Lecture 69 - Admin Connection Class
 
+* To Take actions of Fabric network and a BN App on Fabric an app needs to connect to Fabric.
+* There are 2 ways for an App to connect to Fabric depending on the actions we want to perform. the AdminConnection Class and the BusinessNetworkConnection Class
+* In this lecture we will learn about the AdminConnection class from the Composer API Admin Module
+* also we will learn about the BusinessNetwrokDefinition class from Composer API Common module needed by some AdminConnection class exposed methods
+* 2 source code files contain sample code for this lecture 'admin-connection.js' and 'update-bna.js'
+* The **AdminConnection** class from Admin Module:
+	* is used for Administrative actions on Fabric Runtime
+	* is used for Administrative actions on deployed BN App
+	* an instance is created with 'new'
+	* Constructor needs a JSON object that provides the 'wallet-type' filesystem, inmemory or custom
+	* there are 2 kinds of administrative actions: Card related functions (getAllcards,hasCard, deleteCard,importCard, exportCard) much like `composer card` cli commands and BNA Management functions (install, start, list, ping,reset ,upgrade) mush like the `composer network` cli command
+* The **BusinessNetworkConnection** clsass from Composer API CLient module:
+	* for executing transactions, CRUD operations, Receive events
+* To make the connection both classes expose the `.connect(cardName)` method
+* the card needs to be avaialbe in the cardstore and `.disconnect()` to disconnect
+* in the demo code in 'admin-connection.js' we see how to:
+	* 1. Create an instance of the AdminConnection object
+	* 2. Connect as the PeerAdmin
+	* 3. List the deployed Business Network Apps
+	* 4. Disconnect 
+	* 5. Connect as the Network Admin for airlinev7
+	* 6. Ping airlinev7
+	* 7. Disconnect
+* To install a new archive (.bna) to the Fabric Runtime we can use `.install()` which needs an instance of BusinessNetworkDefinition class and then call `.start()` or `.upgrade(Version,)`
+* The **BusinessNetworkDefinition** class of Composer API Common Module:
+	* represents the BN app (meta data, domain specific resource model, scripts)
+	* to create an instance of this class: use `.fromArchive() method` that reads a .bna file, use `.fromDirectory()` to  read the content of the model from a dir
+* in 'update-bna.js' demo code we will showcase BusinessNetworkDefinition class by:
+	* 1. Create the Admin Connection instance
+	* 2. Connect
+	* 3. Create the Business Network Definition Object `BusinessNetworkDefinition.fromDirectory(bnaDirectory)`
+	* 4. Update the airlinev7 model in runtime
+	* 5. Disconnect
+
+### Lecture 70 - Business Network Connection Class
+
+* sample code for this lecture in 'bn-connection-util.js' and 'test-bn-util.js'
+* The **BusinessNetworkConnection** clsass from Composer API CLient module:
+	* is used to interact with a deployed BN App (Get info about the BNapp, ping the nw,  access registries from runtime, manage identities, submit txn)
+	* Constructor of this class needs instance of 'BusinessNetworkCardStore' `new BusinessNetworkConnection(cardStoreObject)`
+	* before invoking any function on BusinessNetworkConnection object we need to connect the object to the runtime with `.connect(cardName)`
+* in 'bn-connection-util,js' demo code we will:
+	*	1. connect - takes a callback function as an argument
+		If Success : execute callback()
+  	Else : execute callback(error)
+	* 2. disconnect
+	* 3. ping - takes a callback(response, error) as an argument
+* these methods are exported as a plugable module to use in any source file like 'test-bn-util.js' that implements the callback
+
+### Lecture 71 - Submitting a Transaction
+
 * 

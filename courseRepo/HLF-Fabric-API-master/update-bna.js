@@ -23,10 +23,10 @@ const AdminConnection = require('composer-admin').AdminConnection;
 const BusinessNetworkDefinition = require('composer-common').BusinessNetworkDefinition;
 
 const cardNameForPeerAdmin = "PeerAdmin@hlfv1";
-const appName = "airlinev7";
+const appName = "airlinev9";
 // This where I have the archive file for v2.0 of airlinev7
 // CHANGE THIS DIRECTORY FOR YOUR Model Project
-const bnaDirectory = "/AIRLINE v7 Poroject Folder/";
+const bnaDirectory = "../../myCode/acme-airlines/airlinev9/";
 
 // 1. Create the AdminConnection instance
 // Composer 0.19.0 change
@@ -61,7 +61,7 @@ function upgradeApp(){
         // 4. Update the application
         // If you do not have the app installed, you will get an error
         console.log("Install successful")
-        return adminConnection.upgrade(appName, '0.0.2');
+        return adminConnection.upgrade(appName, '0.0.5');
 
     }).then(()=>{
 
