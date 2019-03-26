@@ -1458,4 +1458,58 @@ Participant was added to participant registry.
 
 ### Lecture 68 - Business Network Card Management
 
+* Lecture Learning objectives
+	* Card storage + wallet
+	* Composer Common API for managing Cards (IdCard, BusinessNteworkCardStore,NetworkCardStoreManager)
+* sample coda @ 'manage-card.js' @ HLF-Fabric-API repo
+* BN Card: user interacts with HL Fabric network using the Composer tool. composer tool needs the BN Card (crypto, credentials)
+* Cards can be stored in any type of storage:
+	* File System
+	* Memory (RAM)
+	* Database
+	* Cloud
+* The BN Apps are exposed to participants usually via a mid-tier app (typical NodeJS + Composer API)
+* Mid tier (serverside app) needs the cards to operate on BN App in Fabric.
+* Cards are in a logical  construct called Wallet in mid tier
+* When user authenticates and invokes a REST API call in the midtier. the app will pull out a card from wallet for the user to hit the Fabric BNA through the Composer API
+* Each app user will have his own wallet. Mid tier needs to persist these cards
+* Composer API does not enforce how the cards are stored. its the responsibility of the architect to find the best way to persist the cards
+* The **IdCard** class in the Composer Common API module: 
+	* encapsulates the attributes of the BN Card
+	* we can use this class to get information from the card [user name, credentials, role, metadata]
+	* load a card from: an Archive OR a directory
+	* the workflow is to create an object and call getters on it
+	* we can create new cards by creating a new object of type IdCard and save it to an Archive OR a dir
+* The **BusinessNetworkCardStore** class in the Composer Common API module:
+	* we can use an object of this class to manage cards in the persistent sorage
+	* access the card(s) deployed on the machine
+	* check if the name card exist
+	* add & delete cards from store
+	* avaialble methods retrieve cards `IdCard get(cardName)` `IdCard getAll()` check existence `bool has(cardName)` add remove `delete(cardName)` `put(cardName,new IdCard())`
+	* its an abstract class. we cannot instantiate with 'new'. an instance of this class is retrieved from an instance of 'NetworkCardStoremanager' on Composer Common API
+* The **NetworkCardStoreManager** class in the Composer Common API module:
+	* is a factory for creating instance of 'BusinessNetworkCardStore'
+	* no matter the actual physical implementation we use it
+	* a single instance NetworkCardStoreManager is avaialbe from the Composer Common API module to the  CLient App
+	* to access this instance from client code `const NetwrorkCardStorageManager = require('composer-common').NetworkCardStoreManager;`
+	* it exposes a single function 'getCardStore(type)' to get the BN CardStore instance. `const cardStore = NetworkCardStoreManager.getCardStore( walletType );`
+	* there are 2 predefined wallet types or CardStore types: inmemory and filesystem
+```
+var cardType = {
+	type: 'composer-wallet-filesystem'
+}
+var cardType = {
+	type: 'composer-wallet-inmemory'
+}
+```
+* Devs can create custom storage types for wallets/cards
+* in the demo code 'manage-card.js' we learn how to use the API to create a  cardstore for fs based wallet. it is done in 4 steps
+	* 1. Get the instance of the NetworkCardStoreManager
+	* 2. Create instance of BusinessNetworkCardStore for filesystem based wallet
+	* 3. BusinessNetworkCardStore : Get all cards on file system & print the names on console
+	* 4. BusinessNetworkCardStore :Get the first card by name
+	* what we will see in console are the cards already in our fs
+
+### Lecture 69 - Admin Connection Class
+
 * 
