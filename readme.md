@@ -1208,4 +1208,149 @@ query AircraftsSeatConfiguration{
 
 ### Lecture 62 - Managing identities for Network Applications
 
+* Learn Obj: Relationship between Participant & Identity, CLI Tools to manage Identities
+* HL Fabriv manages identities using a PKI Implementation on the MSP
+* each participant is issued an x509 cert (the flow is covered in prev lecture)
+* any time a user initiates atransaction the VA validates his Cert that is used to sign it
+* The BN Card we use so far contains the credentials (crypto material issued to the user) + Connection profile with urls to MSP|CA or Peers|Orderers
+* Participants of BN Apps need to have a Card to interact with NEtwork App
+* Participants are assigned a Role
+* We have seen do far the Per Admin and NW Admin Role. aslo we ve seen the model struct for participats
+* Roles are used for managing the permissions fro the participants
+* Peer admin is crated during Fabric setup
+* NW admin is created at BN App setup on fabric
+* Other Participant  identities are created by Network Admin or by a participant authorized to create new identities as needed
+* Composer CLI offers 2 commands to manage identities. user of this tool MUST have authority to manage identities (he must provide an appropriate card with the -c option)
+	* `composer participant add --help`
+	* `composer identity --help` 
+* Composer identity command: 
+	* bind: binds existing identity (cert) to participant
+	* issue: issues a new Identioty (card) to participant
+	* list: lists idenitties
+	* request: gets the card for the requested identity
+	* revoke: revoke an identity
+* The workflow on an established network:
+	* 1. Create the Participant
+	* 2. Create | Βind an identity for BNA
+	* 3. User/Participant imports the NW Card created in step 2
+* Create the Participant: 
+	* is done by NW Admin or authotzed participant 
+	* `composer participant add --help` OR use the SDK/API for adding participants OR use Playground OR use Rest Server
+* Create | Βind an identity for BNA:
+	* again done by NW admin or authorized participant
+	* `composer identity issue --help`
+	* a card is generated for the participant
+* How to manage identities on Playground:
+	* We have v8 oimported on playground
+	* a set of rules are already there for the Participant types in `namespace  org.acme.airline.participant`
+	* we 'Create New Participant' passin gin info => Cllick 'ID REGISTRY' => enter an Id name and Participant type (choose one of existing ones)
+	* IN Wallet a new Card is present for new user . we can connect with that one
+* How to manage participants with CLI tool:
+	* `composer participant add -d <JSON code representing the participant data> -c cardName`
+	* JSON template we can get from playground
+	* `composer identity issue -u johnd -a org.acme.airline.participant.ACMENetworkAdmin#johnd -c cardName -x`
+	* -x controls if this user can maange identities
+	* a card gets created.
+	* we import the card and use it to issue commands with the cli
+	* we can check the new id with `composer identity list -c admin@airlinev8` 
+
+### Lecture 63 - Access Control Language (Part 1 of 2) Simple Rules
+
+* Access Control Lang is used to issue access control rules for the various resources in the network
+* we cp v8 to v9
+* Should participants be able to access all resources & take any action on BN app?
+* Access Control can be: 
+	* programmatic, implemented in transaction processing functions, based on user context & transaction data
+	* declarative: rules defined using the Access Control Language
+* Access Control Lang provides Declarative access control over the elements of the domain model
+* A signle file contains all the Rules: 'permissions.acl' in root folder
+* if the file is missiing all is permitted
+* There are 2 types of rules:
+* Simple Rule: 
+	* static in nature
+	* controls access to namespace, asset or property of an asset by a participant type or participant instance
+* Conditional Rule:
+	* Simple Rule + Boolean JS expression evaluated at runtime to ALLOW or DENY acces to the resource by the participant
+* A Rule is associated with:
+	* a resource
+	* a participant type
+	* a CRUD operation
+	* a transaction
+	* a JS Condition
+* ACL is JSON like lang
+* ACL Simple Rule sysntax
+```
+rule Name-of-Rule {
+	description: "Provide description in quotes"
+	resource: "fully qualified resource spec"
+	partiipant: "fully qualified participant spec"
+	operation: ALL or comma separated CRUD ops
+	action: ALLOW or DENY
+}
+```
+* regarding resources we can spec a specific resource class or even a specific instance of the class `org.acme.airline.aircraft#CRAFT001`
+* we can use (*) to spec all resources in namespace
+* we can use (**) which is recursive meaning all child namespaces as well
+* to apply rules on cli tools we use 'org.hyperledger.composer.system' as namespace and command name as resource type
+* a rule may apply to a spec participant or all participants (using keyword ANY). at BNA level or system level
+* NW ADMIN participant type is 'org.hyperledger.composer.system.NetworkAdmin'
+* we can enfore rules to participant types or instances (like resources by id)
+* CRUD ops can be controlled e.g 'READ< DELETE'
+* How rules are processed?
+	* first it checks if permission.acl file exists
+	* if yes rules are executed in order of appearance
+	* if rule is matched the n the spec action is granted
+* Walkthrough: Rules on NEtwork ADMIN
+	* NW admin is granted permission to do app management using cli tools (netwrok, identity, participant commands) AKA system resources
+	* Manage identities for ACME nw app. issue , revoke identity
+```
+	// #1 Allow the 'System Network Admin' to carry out Identities management
+//    and Network operations
+rule NetworkControlPermission {
+  description:  "give admin ALL access to system resources"
+  participant: "org.hyperledger.composer.system.NetworkAdmin"
+  operation: ALL
+  resource: "org.hyperledger.composer.system.*"
+  action: ALLOW  
+}
+rule ParticipantRegistryControlPermission {
+  description:  "give admin ALL access to ACME participant types"
+  participant: "org.hyperledger.composer.system.NetworkAdmin"
+  operation: ALL
+  resource: "org.acme.airline.participant.*"
+  action: ALLOW  
+}
+```
+* we add the rules in v8 and make a v 0.0.3 updating the NW
+* we add a new participant (ACMENetworkAdmin, use: johnd)
+```
+composer participant add -d '{"$class":"org.acme.airline.participant.ACMENetworkAdmin","participantKey":"johnd","contact":{"$class":"org.acme.airline.participant.Contact","fName":"John","lname":"Doe","email":"john.doe@acmeairline.com"}}' -c admin@airlinev9
+```
+* we issue a new identity
+```
+composer identity issue -u johnd -a org.acme.airline.participant.ACMENetworkAdmin#johnd -c admin@airlinev9
+```
+* we import the card
+```
+composer card import -f johnd@airlinev9.card
+```
+* launch the rest server with the new card to see if we can create n Aircraft. he cant as he has no allowance on thios resource
+
+### Lecture 64 - Exercise: Simple Rule for ACMENetworkAdmin
+
+* In this exercise you will create the rules for "ACMENetworkAdministrator". The IT team at ACME have decided that ACMENetworkAdministrator will be responsible for the support of the business network application. Obviously for that they would need READ access to the following Resources:
+	* System resources
+	* ACME Resources
+* Create 2 Read Rules in the permissions file.
+	* AcmeNetworkAdminPermissionSystem - this rule would apply to any participant
+	* AcmeNetworkAdminPermissionAcme - this rule will allow to only ACMENetworkAdministrator
+* Testing:
+	* Update the BNA 
+	* Create a new identity (John Doe = ACMENetworkAdministrator) ... deploy the card for johnd
+	* Start the REST-SERVER using johnd's card
+* Can you read the existing resources?
+* Create a new aircraft resource - are you able to do it? why or why not :-)
+
+### Lecture 65 - Access Control Language (Part 2 of 2) Conditional Rules
+
 * 

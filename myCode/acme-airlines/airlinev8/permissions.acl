@@ -1,0 +1,16 @@
+// #1 Allow the 'System Network Admin' to carry out Identities management
+//    and Network operations
+rule NetworkControlPermission {
+  description:  "give admin ALL access to system resources"
+  participant: "org.hyperledger.composer.system.NetworkAdmin"
+  operation: ALL
+  resource: "org.hyperledger.composer.system.*"
+  action: ALLOW  
+}
+rule ParticipantRegistryControlPermission {
+  description:  "give admin ALL access to ACME participant types"
+  participant: "org.hyperledger.composer.system.NetworkAdmin"
+  operation: ALL
+  resource: "org.acme.airline.participant.*"
+  action: ALLOW  
+}
