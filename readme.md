@@ -1353,4 +1353,109 @@ composer card import -f johnd@airlinev9.card
 
 ### Lecture 65 - Access Control Language (Part 2 of 2) Conditional Rules
 
+* we will use HLF-Fabric-API/util 'bn-test-permissions.js' file to test permissions
+* We should not allow CRUS operations on resources directly in our Web App.
+* we should allow resource manipulation to happen only through controlled transactions
+* Provide permissioned access to transactions
+	* business logic cannot be bypassed
+	* data stays consistent
+	* prevents unauthorized changes
+* CreateFlight txn adds a new flight instance to registry. we will block any CREATE operation on Flight resource and allow only to be created through the txn
+* the use who will invoke the createflight will have:
+	* resource: org.acme.airline.flight.Flight
+	* operation: create
+	* trnasaction: org.acme.airline.flight.CreateFlight
+* this rule DOES NOT allow direct CRUD operation. ONLY through Txn
+* additionally a valid Javascript conditional expression may be specified. this will be evaluated at runtime and allow or deny the transaction
+* JS conditional expression can access various elements of the execution context through symbolic access. we can associate symbols to the various rules
+	* resource (r)
+	* operation (op)
+	* participant (p)
+	* transaction (tx)
+* the rule will look like
+```
+...
+participant(p): "org.example.SampleParticipant"
+resource(r): "org.example.SampleAsset"
+condition:(r.owner.getIdentifier() === p.get(dentifier())
+...
+```
+* complex condtions are supported. we can use utility functions in JS in the script.js file and use them in the rule condtition `condtition: (evaluateAccess(r,p))`
+* In our example we will create a new Participant of type ACMEPersonnelnamed William Smith (wills)
+* the user will be allowed to invoke CreateFlight tranaction  with 2 rules:
+	* Create Access to HistorianRecord is needed for Transactions. this rule will be applied to any user that is allowed to invoke any transaction
+	* Create access needed for the CreateFlight transaction
+* the 2 rules are
+```
+rule AcmeParticipantPermissionHistorian {
+  description: "can write HistorianRecord to the Historian"
+  participant: "org.acme.airline.participant.ACMEPersonnel"
+  operation: CREATE
+  resource: "org.hyperledger.composer.system.HistorianRecord"
+  action: ALLOW  
+}
+
+// #3.2 Needed for Creating the "CreateFlight" transaction
+// Only employees @ ACME can execute this transaction
+rule ACMEPersonnelPermission {
+  description: "only ACME personnel can create a flight"
+  participant: "org.acme.airline.participant.ACMEPersonnel"
+  operation: CREATE
+  resource: "org.acme.airline.flight.*"
+  transaction: "org.acme.airline.flight.CreateFlight"
+  action: ALLOW
+}
+```
+* we will update the BNA adding these rules
+* we will issue an identity and create a participant
+* we will use the bn-test-utility to test the setup `node bn-test-permissions wills@airlinev9 2019-04-01`
+* Steps
+	* add rules to permissions.acl
+	* change version in package.jhson to 0.0.2
+	* create archive `composer archive create  --sourceType dir --sourceName ../`
+	* install bna `composer network install -a ./airlinev9@0.0.2.bna -c PeerAdmin@hlfv1`
+	* upgrade network `composer network upgrade -c PeerAdmin@hlfv1 -n airlinev9 -V 0.0.2`
+	* add participant
+```
+	composer participant add -d '{"$class":"org.acme.airline.participant.ACMEPersonnel","participantKey":"wills","contact":{"$class":"org.acme.airline.participant.Contact","fName":"Will","lname":"Smith","email":"will.smith@acmeairline.com"}, "department":"Logistics"}' -c admin@airlinev9
+```
+* issue identity
+```
+composer identity issue -u wills -a org.acme.airline.participant.ACMEPersonnel#wills -c admin@airlinev9 
+```
+* import card `composer card import -f wills@airlinev9.card`
+* run script
+
+### Lecture 66 - Exercise: Conditional Rule for ACMEPersonnel
+
+* In this exercise you need to fix the existing rule ACMEPersonnelPermission by adding a condition that would check if the participant is from Logistics department - if that is true then ALLOW access.
+
+* Testing
+	* Comment the existing rule
+	* Add the updated rule (with condition)
+	* Update the BNA
+	* Create a new participant of type ACMEPersonnel- Susan Milo (susanm), with department = "Accounting". Hint: Use the participant add command in Readme.md as template
+	* Issue an identity for susanm
+	* Use the utility bn-test-permissions for testing the rule with wills card - CreateFlight should succeed
+	* Use the utility bn-test-permissions for testing the rule with susanm card - CreateFlight should fail
+```
+rule ACMEPersonnelPermission {
+  description: "only ACME personnel from Accounting can create a flight"
+  participant(p): "org.acme.airline.participant.ACMEPersonnel"
+  operation: CREATE
+  resource: "org.acme.airline.flight.*"
+  transaction: "org.acme.airline.flight.CreateFlight"
+  condition:(p.department == "Logistics")
+  action: ALLOW
+}
+```
+```
+composer participant add -d '{"$class":"org.acme.airline.participant.ACMEPersonnel","participantKey":"susanm","contact":{"$class":"org.acme.airline.participant.Contact","fName":"Susan","lname":"Milo","email":"susan.milo@acmeairline.com"}, "department":"Accounting"}' -c admin@airlinev9
+Participant was added to participant registry.
+```
+
+## Section 10 - Composer SDK / API : Coding the Client Apps
+
+### Lecture 68 - Business Network Card Management
+
 * 

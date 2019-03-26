@@ -1,0 +1,73 @@
+// #1 Allow the 'System Network Admin' to carry out Identities management
+//    and Network operations
+rule AcmeNetworkAdminPermissionSystem {
+  description: "can READ the system registries"
+  participant: "ANY"
+  operation: READ
+  resource: "org.hyperledger.composer.system.**"
+  action: ALLOW  
+}
+
+rule NetworkControlPermission {
+  description:  "give admin ALL access to system resources"
+  participant: "org.hyperledger.composer.system.NetworkAdmin"
+  operation: ALL
+  resource: "org.hyperledger.composer.system.*"
+  action: ALLOW  
+}
+rule ParticipantRegistryControlPermission {
+  description:  "give admin ALL access to ACME participant types"
+  participant: "org.hyperledger.composer.system.NetworkAdmin"
+  operation: ALL
+  resource: "org.acme.airline.participant.*"
+  action: ALLOW  
+}
+
+// rule AcmeNetworkAdminPermissionSystem {
+//   description: "give admin READ access to System resources"
+//   participant: "org.acme.airline.participant.ACMENetworkAdmin"
+//   operation: READ
+//   resource: "org.hyperledger.composer.system.*"
+//   action: ALLOW
+// }
+
+// rule AcmeNetworkAdminPermissionAcme {
+//   description: "give admin READ access to Acme resources"
+//   participant: "org.acme.airline.participant.ACMENetworkAdmin"
+//   operation: READ
+//   resource: "org.acme.airline.**"
+//   action: ALLOW
+// }
+
+// #3 Rules for ACMEPersonnel
+
+// #3.1 Needed for ACME Participants to be able to execute transactions
+
+rule AcmeParticipantPermissionHistorian {
+  description: "can write HistorianRecord to the Historian"
+  participant: "org.acme.airline.participant.ACMEPersonnel"
+  operation: CREATE
+  resource: "org.hyperledger.composer.system.HistorianRecord"
+  action: ALLOW  
+}
+
+// #3.2 Needed for Creating the "CreateFlight" transaction
+// Only employees @ ACME can execute this transaction
+// rule ACMEPersonnelPermission {
+//   description: "only ACME personnel can create a flight"
+//   participant: "org.acme.airline.participant.ACMEPersonnel"
+//   operation: CREATE
+//   resource: "org.acme.airline.flight.*"
+//   transaction: "org.acme.airline.flight.CreateFlight"
+//   action: ALLOW
+// }
+
+rule ACMEPersonnelPermission {
+  description: "only ACME personnel from Accounting can create a flight"
+  participant(p): "org.acme.airline.participant.ACMEPersonnel"
+  operation: CREATE
+  resource: "org.acme.airline.flight.*"
+  transaction: "org.acme.airline.flight.CreateFlight"
+  condition:(p.department == "Logistics")
+  action: ALLOW
+}

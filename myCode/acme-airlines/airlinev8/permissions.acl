@@ -14,3 +14,19 @@ rule ParticipantRegistryControlPermission {
   resource: "org.acme.airline.participant.*"
   action: ALLOW  
 }
+
+rule AcmeNetworkAdminPermissionSystem {
+  description: "give admin READ access to System resources"
+  participant: "org.acme.airline.participant.ACMENetworkAdmin"
+  operation: READ
+  resource: "org.hyperledger.composer.system.*"
+  action: ALLOW
+}
+
+rule AcmeNetworkAdminPermissionAcme {
+  description: "give admin READ access to Acme resources"
+  participant: "org.acme.airline.participant.ACMENetworkAdmin"
+  operation: READ
+  resource: "org.acme.airline.**"
+  action: ALLOW
+}

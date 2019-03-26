@@ -12,7 +12,7 @@ const flightNamespace = 'org.acme.airline.flight';
 const transactionType = 'CreateFlight';
 
 // Change this for populating other versions
-bnUtil.cardName='admin@airlinev8';
+bnUtil.cardName='admin@airlinev9';
 if(process.argv.length < 3){
     console.log("Usage: node populate-acme-airline   <card-name> ")
     console.log("Populating Network using a card: ",bnUtil.cardName);
