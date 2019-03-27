@@ -1593,4 +1593,92 @@ createFlightTransaction.setPropertyValue('property_name','property_value)
 
 ### Lecture 72 - Registries
 
+* code for this lecture in 'get-registries.js'
+* we saw how the composer runtime persists the instances of the resources in the Registry
+* there are multiple registries in the runtime for the BN each for a different type of resource
+* The **Registry** class of API Client module is an abstract class that represents an actual Registry:
+	* we can carry out CRUD operations on registry using methods of Registry class
+	* Resource type added to the registry MUST match with Registry
+	* There are multiple concrete Registry implementation classes
+		* **AssetRegistry**
+		* **ParticipantRegistry**
+		* **TransactionRegistry**
+		* **Historian** : Read only. stores historian records
+		* **IdentityRegistry** : Read only : set of identifiers on the blockchain
+* There are separate Asset & Participant registry for Client & Runtime:
+	* AssetRegistry & ParticipantRegistry classes are available in the Client module. an instance is received through the BusinessNetworkConnection object
+	* AssetRegistry & ParticipantRegistry classes are available in the Runtime module. an instance is received through a global function call in Transaction processor function
+* To get access to the Registry instance the app needs to connect to the runtime using **BusinessNetworkConnection** and then invoke the `.getRegistry(FQ registry name)`. what we get back is an instance of the **Registry** class. specalized getter avialable are:
+	* `.getAssetRegistry(RegistryName)`
+	* `.getParticipantRegistry(RegistryName)`
+	* `.getTransactionRegistry(RegistryName)`
+	* `.getHistorian()`
+	* `.getIdentityRegistry()`
+* BusinessNetworkConnection class offers methods that return lists of registries based on resource type:
+	* `getAllAssetRegistries()`
+	* `getAllParticipantRegistries()`
+	* `getAllTransactionRegistries()`
+* In the demo code 'get-registries.js' we will see these methods in action:
+	* 1. Use the bn-connection-util to connect
+	* 2. Get & Print the Asset Registries
+	* 3. Get & Print the Participant Registries
+	* 4. Get & Print the Transaction Registries
+	* 5. Get & Print the Historian Registry
+	* 6. Get & Print the Identity  Registriy
+
+### Lecture 73 - Resources
+
+* we will see how to use methods offered by Resource class (Common module), and how to use Registry class instance to perform CRUD operations on registgries
+* The **Resource** class in Common module represents an instance of Type in the Registry:
+	* an example of type is AIrcraft in our BNapp 
+	* Resource instances are like pointers to the instances in the registry
+	* New instances of the Resource class are created using the **Factory** class
+	* Existing Resource instances are received from the registry using **Registry** class
+* A Resource instance offers various getter methods:
+	* `getType()`
+	* `getNamespace()`
+	* `getFullyQualifiedType()` // Namespace.Type
+	* `getIdentifier()`
+	* `getFullyQualifiedIdentifier()` // Namespace#id
+	* `instanceOF(Namespace.B)` false
+	* `isRelationship()` // if an instance represents a relationship
+* A Resource instance offers various setter methods:
+	* `setIdentifier(new-identifier)`
+	* `setPropertyValue(prop-name,value)`
+	* `addArrayValue(prop-name, value)`
+* An instance of Registry is used to perform CRUD operations
+	* CREATE: `add(resourceInst)` , `addAll([resource1,resource2,resource3])`
+	* READ: `get(resourceId)` , `getAll()`
+	* UPDATE: `update(resourceInst)` , `updateAll([resource1,resource2,resource3])`
+	* DELETE: `remove(resourceInst)` , `removeAll([resource1,resource2,resource3])`
+* in the demo code 'add-resources.js' we will:
+	* 1. Connect using the bn-connection-util
+	* 2. Get the AssetRegistry from connection
+	* 3. Create 2 instances of Aircraft resource using the factory & initialize
+	* 4. Invoke registry.addAll([Array of Aircraft resource instances])
+
+### Lecture 74 - Querying the Registries
+
+* we will learn how to invoke named and dynamic queries using the **BusinessNetworkConnection** class from Client module
+* we will work on v9 which model has a query file. the demo code in in 'client-query.js'
+* Named Queries: 
+	* defined as part of the BN Model (have seen this)
+	* exposed as REST API from composer Rest Server component
+* Dynamic Queries:
+	* constructed dynamically @ runtime
+	* 2 ways to use them: Composer API in Transaction Processor function OR Client code
+* The API for executing queries of both types in client code is available in **BusinessNetworkConnection** class instance
+* we can invoke a named query with the `.query(named, parameters_object)` method
+* to execute a dynamic query:
+	* first use the `.buildQuery(query_statement)` method. it returns a query object
+	* second we use the query object in the `.query(queryReturned, parameters_object)` to invoke the query
+* The result is always a JSON object array
+* in our demo code ''client-query.js' we will
+	* 1. Create the Client Connection
+	* 2. Execute a Named Query using Client Module : query()
+	* 3. Create a Dynamic Query using Client Module : buildQuery()
+	* 4. Execute the Query
+
+### Lecture 75 - Subscribing to Events
+
 * 
