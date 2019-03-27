@@ -21,7 +21,7 @@
 
 const BusinessNetworkConnection = require('composer-client').BusinessNetworkConnection;
 // Used as the card for all calls
-var cardName = "admin@airlinev7";
+var cardName = "admin@airlinev9";
 const   registryId = "org.acme.airline.aircraft.Aircraft";
 
 // v0.20.5 does not require the card store

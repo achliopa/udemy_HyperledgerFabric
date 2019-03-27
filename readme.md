@@ -1563,4 +1563,34 @@ var cardType = {
 
 ### Lecture 71 - Submitting a Transaction
 
+* To submit transactions for processing we need multiple classes:
+	* **Factory** class from API Runtime module: it is used to create new resource instances.
+* To get access to the factory we need:
+	* BusinessNetworkConnection class from Client module
+	* BusinessNetworkDefinition from Common module
+* Resource class from Common module is used represents an instance of the resource type defined in the module
+* the demo code for this lecture is in 'bn-factory-submit-txn.js'
+* The function `.getBusinessNetwork()` of **BusinessNetworkConnection** is used to get information about the BN app from Runtime. it returns an instance of **BusinessNetworkDefinition** class. this class encaptulates info about the BN App. This class exposes the function `.getFactory()`. this function returns an instance of the **Factory** class of the Runtime module
+* The **Factory** class from API Runtime module is used to create new resource instances. It offers 5 functions:
+	* `.newResource(namespace,type,identifier)` creates a new **Resource** class object from Common module. the type is what is defined in BNApp
+	* `.newCOncept(namespace,type,options)` creates an instance of **Concept** class from Common module
+	* `.newRelationship(namespace,type,identifier)` creates a new **Relationship** class object from Common module. a pointer tot he resource identified in the identifier
+	* `newEvent(namespace,type,id,options)` creates an instance of event (Resource class of type event)
+	* `newTransaction(namespace,type,identifier,options)` creates an instance of **Resource** class of type transaction
+* This transaction instance can be submitted for processing using the instance of **BusinessNetworkCOnnection** of Client module using its `.submitTransaction(transaction)`
+* The **Resource** class from Common module represents a resource instance that has a Type (BN Model resurce definition) e.g Flight or Aircraft event our txn has a type 'CreateFlight'. how to use it
+```
+var createFlightTransaction = Factory.newTransaction(...,...);
+createFlightTransaction.setPropertyValue('property_name','property_value)
+```
+* in the demo code we will see how to:
+	* 1. Use the bn-connection-util to create the connection to airlinev7
+	* 2. Get the Busines Network Definition from Runtime
+	* 3. Get the factory from the Business Network definition
+	* 4. Create a new Transaction instance
+	* 5. Set the property values in the transaction object
+	* 6. Submit the transaction
+
+### Lecture 72 - Registries
+
 * 

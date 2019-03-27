@@ -18,7 +18,7 @@
 const FileSystemCardStore = require('composer-common').FileSystemCardStore;
 const BusinessNetworkConnection = require('composer-client').BusinessNetworkConnection;
 // Used as the card for all calls
-var cardName = "admin@airlinev7";
+var cardName = "admin@airlinev9";
 const   registryId = "org.acme.airline.aircraft.Aircraft";
 
 // 1. Create instance of file system card store
