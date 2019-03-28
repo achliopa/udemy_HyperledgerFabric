@@ -1787,4 +1787,36 @@ event FlightCreated {
 
 ### Lecture 77 - Crash course in Mocha and Chai
 
-* 
+* Unit testing: Isolate each part of the program and show that parts are correct
+* We should develop test cases for client code and BNapp as well
+* The unit testing setup for BNapps in Fabric is: NodeJS EmbeddedRuntime+Mocha+Chai
+* Benefits of the setup
+	* testing by developer for increased productivity
+	* repeateable | automated test cases
+	* improved code quality
+* mocha global install `npm install -g mocha`
+* chai local install `npm install chai`
+* with mocha we use js test files run with mocha `mocha test-file.js`
+* test files use the 'describe' (test suite) and 'it' (test case) statements.
+* describes can be nested
+* preconditions and postConditions (cleanup) are done with hooks (lifecycle methods)
+	* `before(callback)` // runs before all tests in block
+	* `beforeEach(callback)` // runs before each test in block
+	* `after(callback)` // runs after all tests in block
+	* `afterEach(callback)` // runs after each test in block
+* we see mocha in action in 'mocha-demo.js'
+* hook function execution is Asynchronous. if we want to make hook function execution Synchronous we need to use `done()` in the callback when our code has done what we want befoer continuoing with actual tests
+* Chai is a BDD/TDD assertion library for node and the browser that can be paired with any JS testing framework. assetions types used (they must be imported to be used):
+	* `assert`
+	* `should` BDD
+	* `expect` BDD
+* we see chai in action in 'chai-demo-assertions.js' and 'chai-demo-bdd.js'
+	* asserion `assert.equal(true, true, 'otherwise problem');`
+	* bdd ` expect(true).to.equal(true);`
+
+### Lecture 78 - Writing Unit Test Cases for Network Applications
+
+* we will use the file 'my-test.js' to run actual unit tests on the BNApp using the embedded runtime and test libs
+* we can use the  yeoman hyperledger-composer generator test templates `yo  hyperledger-composer`
+* alternatively we can create a test case file copyin code from 'mocha-ut-harness-template.js'
+* Writing Unit Test Cases
