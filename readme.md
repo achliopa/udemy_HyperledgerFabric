@@ -1681,4 +1681,63 @@ createFlightTransaction.setPropertyValue('property_name','property_value)
 
 ### Lecture 75 - Subscribing to Events
 
+* In our client app we can listen for events coming from the BNapp
+* to listen to events we can:
+	* use the client API
+	* use the REST server
+* our demo source code files are 'subsribe-event.js' for client API and 'subscribe-event-ws.js'  for web server
+* Events use is HL Fabric:
+	* Participants execute Transactions
+	* Transactions emit Events
+	* Apps subscribe to the Events (client API or composer-rest-server)
+* Events are defined in the BN Model e.g.
+```
+event FlightCreated {
+	o String flightId
+}
+```
+* B@B partent client apps will want to subscribe to this event
+* Subscriber will receive ALL emited events. Criteria based subscription is NOT supported (YET)
+* Event filtering must be implemented in application logic
+* 2 ways to subscribe:
+	* Event subscription API
+	* Websocket connection to COmposer REST Server
+* To use the Event subscription API we have to use the **BusinessNetworkConnection** from Client module. BNConnection extends EventEmitter builtin class from NodeJS
+* we can use the BNConnection class`.on('event',callback)`
+* in `subscribe-event.js' we see sample code for creating subscription in client app using the API
+```
+    // #2 Subscribe to event
+    bnUtil.connection.on('event',(event)=>{
+        var namespace = event.$namespace;
+        var eventtype = event.$type;
+
+        var fqn = namespace+'.'+eventtype;
+
+        // #3 Filter the events
+        switch(fqn){
+            case    'org.acme.airline.flight.FlightCreated':        
+                    // #3 Process the event
+                    counter++;
+                    console.log('Event#',counter);
+                    processFlightCreatedEvent(fqn, event);
+                    break;
+            default:    
+                    console.log("Ignored event: ", fqn);
+        }
+    });
+```
+* we test it and it works. message is received as JSON
+* Composer REST server uses the API to subscribe to all events from BNApp.
+* It exposes a websocket interface for our app to consume
+* our client app thwen connects to 'ws://localhost:3000' at the REST server to listen to the emited event
+* we use 'subscribe-events-ws.js' websocket event content is received as String
+
+### Assignment 1: Write a utility to create | delete test data​ for ACME Airline Model
+
+* Code at 'deleteAllFlights.js' and 'populate-acme-airline.js'
+
+## Section 11 - Composer SDK / API : Coding the Transaction Processors
+
+### Lecture 76 - Embedded Runtime for Testing
+
 * 

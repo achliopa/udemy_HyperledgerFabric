@@ -54,7 +54,7 @@ client.on('connect', (connection)=>{
 })
 
 // #7 Call connect with URL to the REST Server
-client.connect('ws://localhost:3000');
+client.connect('ws://localhost:3001');
 
 
 
