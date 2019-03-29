@@ -7,7 +7,7 @@
 var assert = require('chai').assert;
 
 
-const utHarness = require('C:/Users/Rajeev/Documents/Course/Hyperledger-Course/workspace/wip/HLF-API/ut-harness.js');
+const utHarness = require('/home/achliopa/workspace/udemy/hyperledgerFabric/courseRepo/HLF-Fabric-API-master/ut-harness');
 
 // This points to the model project folder
 var modelFolder = __dirname+'/..'

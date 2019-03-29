@@ -1817,6 +1817,122 @@ event FlightCreated {
 ### Lecture 78 - Writing Unit Test Cases for Network Applications
 
 * we will use the file 'my-test.js' to run actual unit tests on the BNApp using the embedded runtime and test libs
-* we can use the  yeoman hyperledger-composer generator test templates `yo  hyperledger-composer`
+* we can use the  yeoman hyperledger-composer generator test templates `yo  hyperledger-composer`. the 'test.js' test file is in the generated model folder
 * alternatively we can create a test case file copyin code from 'mocha-ut-harness-template.js'
-* Writing Unit Test Cases
+* Writing Unit Test Cases steps:
+	* 1. Arrange Embedded Runtime Env (Deploy BNA to Runtime & Connect)
+	* 2. Define test cases and code the test cases against the runtime env
+	* 3. Implement assertions.
+	* 4. execute test suite
+* we cp 'mocha-ut-harness-template.js' in our generated project folder 'test-bna' in /test folder and rename it
+* we change the path to 'ut-harness.js'
+* we change path to our model folder
+* we initialize all required classes in before() in which we use done. 
+* we create test suite with describe()
+* sample project folder has model file with assets. we use its namespace fro out test
+```
+const nameSpace = "test";
+const resourceName = "SampleAsset";
+```
+* the actual test case is
+```
+it('should have 1 asset instance with value=10', () => {
+        let registry = {};
+        // Add an asset
+        // Get the asset registry using the BN Connection
+        return businessNetworkConnection.getAssetRegistry(nameSpace+'.'+resourceName).then((reg)=>{
+            registry = reg;
+            // Get the factory using the BN Definition
+            const factory = bnDefinition.getFactory();
+            // Create the instance
+            let sampleAsset = factory.newResource(nameSpace,resourceName,'SA-1');
+            sampleAsset.value=10;
+            // Add to Registry
+            return registry.add(sampleAsset);
+        }).then((asset)=>{
+            // Assert
+            assert.equal(asset.value,"1","Value not equal or undefined");
+        }).catch((error)=>{
+            console.log(error);
+        });
+    });
+```
+
+### Lecture 78 - Runtime API for Transaction Processing Functions
+
+* an instance of Runtime API Class **Api** of Runtime module is available in the transaction processing function by default
+* in this Lecture we will go through the code of the transaction processing function of the CreateFlight transaction we created in the airline model
+* We will learn about 2 new classes: **AssetRegistry** and **ParticipantRegistry** both from the Runtime module
+* we will learn how to handle errors in the transaction processing functions
+* We will extend the transaction processing function of CreateFlight transaction and add test cases to run on embedded runtime
+* Τhe **Api** class of the Runtime module: 
+	* contains ROOT of the transaction processor API
+	* our function implementation will be executed in the Fabric runtime
+	* an instance of the Runtime **Api* class is made avaialbe in the transaction function code
+	* all exposed functions of Api class are avialable in our function code by default as global functions (no api.function needed)
+* transaction processor code manages the resource instance + business logic. to perform CRUD operations on resources it needs access to the Registry. it acheives that with **Api** class:
+	* `getAssetRegistry()` returning an instance of the **AssetRegistry** class`
+	* `getParticipantRegistry()` returning an instance of the **ParticipantRegistry** class`
+* These are different instances from th instances we get with same functions on BNConnection class (Registry class in Client module). it is the same concept of perfoming crud operations directly and doing them through transaction (direct CRUD can be blocked but transactions allowed)
+* Runtime module Registry concrete classes extend the Client module Registry abstract class
+* geting access to the concrete Registry classes allow us to use the full set of CRUD operations on the resource instances (we have seen these methods)
+* when the  Runtime **Api** instance throws an error it rolls back all changes prior to the error throw (in the scope of the transaction)
+* we can take advantage of this and use it to perform sanity checks in the code (e.g double instance rollsback all transaction)
+```
+if(some-condition){
+	// rollback all changes & inform caller about the error
+	throw new Error("Print a message")
+}
+```
+* in airlinev9 we will implment the txn `function createFlight(flightData)` to: throw an error if 'schedule date is past, add a Flight asset
+* we will implement 'schedule-validation.js' to unit test the code in the transaction createFlight
+* in 'script.js we have the `createFlight()` implementation
+	* we throw an error on validation check for rollback
+	* we get the registry and use the factory to create a resource
+	* we use factory to create a concept for the resource
+	* we emmit an event aty the end using factory
+	* we return the registry with the new resource in
+* in test scenario 1 in 'schedule_validaation.js'
+	* we build the transaction passing props and submit it.
+	* when it returns we assert registry lkength
+
+### Lecture 80 - Exercise: Define the Aircraft Assignment Transaction
+
+* Add the following Transaction to the model file
+	* 'org.acme.airline.flight.AssignAircraft'
+	* Parameters: {o String flightId o String aircraftId}
+* Add the event
+	* 'org.acme.airline.flight.AircraftAssigned'
+	* Parameters: {o String flightId o String aircraftId}
+* Code the Transaction Processor function 'AssignAircraft'
+	* Check if flight and aircraft exist - if not throw an exception
+	* Use factory to create the relationship
+	* Assign relationship to fligt
+	* Use registry to update the flight
+* Code the unit test case 
+	* In before() add some test data 
+	* Create the test case file (Solution is in aircraft-assignment.js) .... refer to the schedule-validation.js for help :)
+* Write the test cases for:
+	* Sunny day scenario
+	* FlightID does not exist
+
+### Lecture 81 - Query invocation in Transaction Processing Functions
+
+* Query functions are available in the BNConnection Client module class. we talked about them in aprevious lecture (nmaed, dynamic queries)
+* Query methods are avalable in **Api** class of Runtime module. directly in our transaction we can use `query()` and `buildQuery()`
+* to query world state Fabric setup should be a COuchDB
+* Why perform queies in transactions?
+	* batch queries
+	* calculations
+	* consolidations/rweporting
+* A realistic use case for our app: 
+	* ACME aircrafts sometimes go for unplanned maintenance.
+	* All flights that are assigned the aircraft need to be updated with a new aircraftId/assignment (batchUpadate)
+	* We need to create a transaction that would allow the Logistics to do batch updates (named or dynamic query) 
+	* `UpdateAircraftBatch(...)`
+	* query the flights from today or N days that are assigned a specific aircraft
+	* update the assigned aircraft to passed aircraft ID
+
+### Lecture 82 - Implementing Programmatic Access Control
+
+* 
