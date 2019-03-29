@@ -1935,4 +1935,41 @@ if(some-condition){
 
 ### Lecture 82 - Implementing Programmatic Access Control
 
+* In Composer there are 2 ways to carry out Access Control:
+	* Programmatic: rules coded in the transaction processing functions (based on user context & transaction data)
+	* Declarative: rules defined using the Access Control Language (ACL)
+* 2nd way we saw. now we will see the 1st way
+* To implement aaccess control in transaction code we use `getCurrentParticipant()` from Runtime module **Api** class instance. the method returns an instance of Common module **Resource** class representing the participant that invoked the transaction.
+* using the `getFullyQualifiedType()` of the Resource instance gives the participant type
+* to get the ID of the participant we use `getFullyQualifiedIdentifier()` of the returned Resource instance
+* examplke of programmatic accesscontrol 
+```
+function createFlight(flightData){
+	getCurrentParticipant();
+		if(getFullyQualifiedType() == 'org.acme.airline.participant. ACMEPArticipant')
+	// createFlightCode
+}
+```
+
+### Lecture 83 - Emitting events and Integrating with external systems
+
+* [RuntimeApi](https://hyperledger.github.io/composer/v0.19/api/runtime-api)
+* **Api** class of Runtime module offers `emit(events)` method to emit events as it extends NodeJS event emitter class. this method emits an event defined in the transaction
+* the 'event' definition is created as part of the model. it is populated in transaction and it is received as JSON by the subscriber
+* Resource instances in transaction are JS objects. they can be can be converted to JSON with the Common module Serializer class instance we get with `getSerializer()`. the serializer exposes 2 methods `toJson()` and `fromJson()`
+* Somestimes we want to integrate the BNApp with external systems such as:
+	* DBs
+	* legacy Systems
+	* Heavy processing units
+* As long as these external systems expose a REST API we can integrate them directly to BNapp
+* Runtime module **Api** clas exposes `.post(url,typed)` method as global. typed can be: concept, asset, participant, transaction
+* When transaction processor function invokes the porst method it creates the JSON representation of the instance passed as typed. this is sent to the external system's REST API endpoint
+* The remote ReST endpoints responds with a JSON object which can be converted back with getSeriealize()
+* A challenge when using 'post()' method is consensus. if 3 peers execute the transaction invoking post to an external system firs two might get {x:1} and 3rd {x:2} as reply if in the meantime the data in the external system is altered. this causes consensus failure
+* to solve it we have to make sure the result of the REST request is a pure function (indempotent). from the same input of all peers there should be the same output for all peers
+
+## Section 12 - Developing Front End Applications for Network Applications
+
+### Lecture 84 - Application Design Patterns
+
 * 
