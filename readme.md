@@ -2321,3 +2321,58 @@ composer participant add -d '{"$class":"org.acme.airline.participant.ACMENetwork
 	* 'cloud' folder has shellscripts and configs to setup fabric on cloud
 * We will demo the workings of the workbench
 	* Launch the multi-org/setup
+	* clean the setup
+* We wil create a multi-org setup in a single vm that will have 
+	* 1 CA Server (@localhost:7054)
+	* a single orderer organization with 1 orderer (@localhost:7050) running SOLO
+	* 2 peer organizations: 
+		* ACME organization (1 anchor peer @localhost:7051 and 1 non-anchor peer @localhost:8051)
+		* Budget organization (1 anchor peer @localhost:9051)
+	* all peers will join the 'airlinechannel' an application channel created by the script
+* Demo: Launch the multi-org setup
+	* Step 1: Setup 'CA server' & setup all of the identities
+	* Step 2: Generate Fabric NW config & launch 'Orderer'
+	* Step 3: Create 'airlinechannel' and launch peers
+	* Step 4: Test the setup
+* Step1: in vm
+```
+cd fabric-ca/bins
+./run-all-caserver,sh
+```
+* Step 2: in vm
+```
+cd orderer/bins
+./run-all-orderer.sh
+```
+* Step 3: in vm
+```
+cd peers/bins
+./run-all-peers.sh
+```
+* Step 4: in vm
+```
+cd peers/bins
+. set-env acme 7050 admin
+./chain-test.sh
+```
+* `./chain-test.sh` accepts actions install | instantiate | invoke | query. we call them in the order of appearace (instantiate might need rerun). 
+	* install installs the chaincode
+	* instantiate instantiates the code we can check it with `peer chaincode list --instantiated -C airlinechannel` (wait couple of mins and rerun)
+	* query asset status with ` ./chain-test.sh query`
+	* invoke asset transfer with `./chain-test.sh invoke` and rerun query
+	* to cleanup we need to run the `./clean.sh` script in 'fabric-ca' 'orderer' and 'peers' bins scripts folder
+	* to clean them all in one `cd setup` and `./clean.sh` it cleans up all components. `./clean.sh all` cleans all components and removes fabric binaries
+* We use `~/setup/clean.sh all` when we want to update the binaries (to delete them first)
+
+### Lecture 12 -  Let's play with workbench (Exercise)
+
+* Part 1: Create the multi-org Fabric setup
+* Part 2: Test the multi-org Fabric setup
+* Part 3: Clean up the multi-org Fabric setup
+* We have done it
+
+## Section 3 - Setup the Fabric Network Identities
+
+### Lecture 13 - Setup the Fabric Network Identities
+
+* 
