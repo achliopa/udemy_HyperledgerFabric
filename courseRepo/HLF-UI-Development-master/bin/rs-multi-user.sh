@@ -20,13 +20,13 @@ export COMPOSER_DATASOURCES='{
     "db": {
         "name": "db",
         
-        "host": "HOST NAME",
-        "port": PORT NUMBER,
+        "host": "ds127736.mlab.com",
+        "port": 27736,
        
         "database": "restauth",
 
-        "user": "test",
-        "password": "test",
+        "user": "root66",
+        "password": "root66",
 
         "connector": "mongodb"  
     }

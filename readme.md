@@ -2070,4 +2070,142 @@ composer-rest-server
 
 ### Lecture 87 - Working of Multi User Enabled REST Server
 
-* 
+* REST Server supports Multi-User Setup beacuse it must support multiple users of the BNApp. all these users by default will use the common identity to hit the Fabric API throught the COmposer REST Server. SAme Idneity is used for transactions of ALL USERS...
+* This is very very bad practice
+* To solve this issue Composer REST Server associates Identitites (Cards) with authenticated users
+* A Launch Identity with elevated rights is used to launch the server
+* After laucn there is a wallet managed per user on the rest server
+* Everytime a user executes a transaction his card is used to sign the transaction to Fabric API
+* REST server needs persistent storage to manage the users cards. any NoSQL DB will do (preferably Couchbase and MongoDB). DB is connected using a loopback connector
+* When a multi-user rest server is startted it exposes a wallet api
+* users can use the api to upload their cards to the REST server
+* Rest server insertts the cards to the DB to a users wallet/card
+* When an authenticated user invokes an API call on the server. the server gets the users card from storage and signs it and sends the transaction to fabric
+* In this pattern cards are maintained ina DB.. so this is a signle point of failure. REST Server must be protected with all means. same holds to DB
+
+#### Lecture 88 -  Walkthrough - REST Server Multi User mode
+
+* script '/HLF_UI_Development/bin/rs-multi-user.sh' shows how to setup REST server ffor multi-user mode. combined with the oath setyup script is a complete solution for securing and making rest server usable for an app
+* To setup multi-user we follow 4 steps
+	* 1.Eanble AUTH on REST Server (Done)
+	* 2.Setup peristent storage for wallet maangement, install loopback DB Connector module
+	* 3.Extend launch script to enable multi user mode
+	* 4.setup an identity on BNApp to match the OAuth identity
+* For step 2 we use mlab. we setup a sandbox db (restauth) and add a user and cp the mongo connection script. we install the loopback connector for mongodb `npm install -g loopback-connector-mongodb`
+* For step 3 we extend the launch sript of rest server
+	* add `export COMPOSER_MULTIUSER=true`
+	* add env variables for datasources (use a JSON string dictated by loopback connector to mongodb) using credntials from mlab
+```
+export COMPOSER_DATASOURCES='{
+    "db": {
+        "name": "db",
+        
+        "host": "HOST NAME",
+        "port": PORT NUMBER,
+       
+        "database": "restauth",
+
+        "user": "test",
+        "password": "test",
+
+        "connector": "mongodb"  
+    }
+}'
+```
+* we launch rest server. we see one omore endpoint for wallet. user will use it to upload whis card
+* we need to add the user to to BNAPp
+```
+composer participant add -d '{"$class":"org.acme.airline.participant.ACMENetworkAdmin","participantKey":"acloudfan","contact":{"$class":"org.acme.airline.participant.Contact","fName":"a","lname":"f","email":"acloudfan@acmeairline.com"}}' -c admin@airlinev9
+
+```
+* we issue the identity `composer identity issue -u acloudfan  -a org.acme.airline.participant.ACMENetworkAdmin#acloudfan -c admin@airlinev9`
+* the genrated card we will upload to the restserver
+* we authenticate first. we get 500 error when trying to access fabric
+* we import the card file with wallet post endpoint. the name we provide must match the card name
+* we peek into mongodb to see the collenctions added
+
+### Assignment 2: Create the Design Blueprint for the Fabric Application UI
+
+* Background: The application is a open marketplace where users will be able to buy and sell securities. Generally such users do not trust any application with their personal information and credentials.
+* Characteristics of the application: 
+	* This application will be used by users in the public domain
+	* Chief architect has determined that adoption of the application would depend on the: Ease of use, Level of trust on the application
+	* Users will be able to review historical reports 
+	* Users would like to manage their preferences so that application will show what they prefer
+	* Users are not tech savvy
+	* A good to have feature will be Push notifications on users devices
+* Your Task
+	* Design the application keeping in mind all of the requirements.
+	* Make as many assumptions as you want as the application design is in early phases.
+* Questions for this Assignment
+*	Which pattern did you use?  Why? PS: If its a new pattern, then please describe
+	* Which pattern do you think is least suitable?  Why?
+	* Do you think users will trust the application built with your design?  Why?
+	* Which technologies would you use?
+	* Where would you manage the user preferences?
+	* How would you serve the historical reports?	Hint: Historical reports from Fabric * transaction perspective is just one type of report
+	* Bonus question: How do you think the Push notification can be built?*
+
+## Section 13 - ACME Airline Rewards Initiative
+
+### Assignment 3: Model Development: ACME Airline Rewards Application
+
+**Partner Rewards** 
+
+* ACME already has a system in place to reward its Partners. Rewards are based on the business that partners bring to ACME airline. Here is how it works:
+* Partners such as Expedia/Travelocity sell ACME air tickets on their website. When the customer buys the ticket from these websites, Partners earn:
+	* Commissions
+	* Reward points
+* Partners can use the reward points to give discounts to their customer or to keep the discounts for themselves.
+* The big challenge with the rewards system is that it is not transparent & partners are not very excited to earn or use them.
+
+**ACME Rewards Research**
+
+* Recently ACME team did some research on how to motivate partners to sell ACME airlines tickets to customers. What they found out is that they could benefit from their Reward system if they could make it transparent & flexible.
+* Business team has decided to revamp the entire reward system. They have decided to make it extensible and flexible. Here is what they are looking for the technology team to implement:
+	* Transparency in terms of rewards earned by the partner
+		* Reward points will be allocated by the accounting department
+		* Every time account system receives payment from Partner it would allot appropriate number of reward points to the partner
+	* Partners can redeem reward points for cash 
+		* Business rules can be decided by you. Each 25 reward points is $1
+	* Cash transfer mechanism will be triggered off the chain
+	* Partners can spend reward points to carry out business among themselves
+		* Lets say there is a partner A and Partner B
+		* Partner A is a travel agent and has 1000 reward points
+		* Partner B is a B2B Airlines Partner 
+		* Partner A can buy Partner B's services using the ACME Reward points
+	* Business team is very confident and sees a reward system as new opportunity to promote its brand in the industry. The long term vision is that once the ACME reward system becomes popular, it will be opened to:
+
+	* Customers: In direct partners e.g., hotel Reward points will become a value token and the ecosystem will help ACME to expand its reach to a larger base of loyal customers and partners !!!
+
+**ACME Rewards Implementation**
+
+* You are the Lead technologist for this project. Your decision will be final but you have been told that you need to build the system with following specifications:
+* Technology:
+	* Use Hyperledger Fabric
+	* Use the composer framework
+* Model Specs:
+	* Model: Define appropriate set of participants
+	* Model: Define appropriate set of assets
+	* Model: Event is emitted every time rewards are (a) redeemed (b) allocated (c) transferred
+	* Model: Transactions for allocating - only accounting will be able to execute, transfer of points can be done by Partner A to Partner B, 
+	* Model: Queries e.g., Partners should be able to query there balance, transactions etc
+* Model Access Control:
+	* Model the access control based on the participants
+
+**Guildelines**
+
+* You are the final owner -  so feel free to make decisions
+* There is no right or wrong way
+* In this part you do not have to code
+* Get the model reviewed from other students and the instructor BEFORE starting the coding
+
+**Questions for this Assignment**
+
+* Did you model the reward point as an asset? If yes why? If no why?
+	* Reward points are like value tokens. If in your model each reward point is trackable then it is suggested that you create the reward point as an asset. If this strategy is applied then you would need to assign unique identity to each token.
+	* Otherwise a reward point can just be a number that gets added to (or subtracted from) account balance for the partner.
+* How many roles/participant types did you design?  In bullet-points describe the permissions for each role.
+	* Network administrator: Manage the application. Create new participants & Id
+	* Accounting department participant: Credit member accounts with reward points. Run reports on reward points
+	* Rewards Participant: Query the reward points. Transfer their reward points to other partners. Redeem their reward points for Acme Airline payments
