@@ -2309,5 +2309,15 @@ composer participant add -d '{"$class":"org.acme.airline.participant.ACMENetwork
 	* launch multi-org test setup
 	* cleanup test set-ups
 * HLF-Workbench has multiple folders
-	* 'bin' has fabric binaries installed witht he scripts
-	* 
+	* 'bin' has fabric binaries installed with he scripts
+	* 'fabric-ca/bins' has shellscripts to manage identities
+	* 'fabric-ca/client' has the MSP for all identities created in the setup
+	* 'fabric-ca/server' holds files related to ca-server
+	* 'nodechaincode' has chaincode for testing our setups
+	* 'orderer/orderer.yaml' has the default cofig of the orderer
+	* 'orderer/bins' has shellscripts to manage the orderer
+	* 'peers/core.yaml' has defualt cofig of peer 
+	* 'peers/bins' has shellscripts to manage peers
+	* 'cloud' folder has shellscripts and configs to setup fabric on cloud
+* We will demo the workings of the workbench
+	* Launch the multi-org/setup
