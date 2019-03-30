@@ -1,0 +1,18 @@
+# This is just a temp file to hold the IP Address  of Cloud VM #
+
+ipaddr.txt
+==========
+
+Acme Peer:
+18.204.204.201
+
+Budget Peer:
+54.87.106.2
+
+Orderer:
+18.212.116.189
+
+Fabric-CA:
+18.208.245.251
+
+

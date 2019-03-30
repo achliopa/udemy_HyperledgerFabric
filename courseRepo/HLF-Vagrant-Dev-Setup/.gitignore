@@ -1,0 +1,5 @@
+.vagrant
+temp
+fabric-tools
+package-lock.json
+util/node_modules

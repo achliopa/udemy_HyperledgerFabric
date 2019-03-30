@@ -1,0 +1,32 @@
+# List all Peer orgaznizations
+organizations:
+  acme:
+    peers:
+      - acme-peer1:
+          url: grpc://52.205.251.182:7051
+          eventUrl: grpc://52.205.251.182:7051
+
+  budget:
+    peers:
+      - budget-peer1:
+          url: grpc://18.212.140.88:7051
+          eventUrl: grpc://18.212.140.88:7051
+# List the orderer URL
+orderers:
+  orderer.airline.com:
+      url: grpc://52.200.206.97:7050
+# List teh CA 
+ca:
+  name: ca.server.com
+  url: http://54.173.103.244:7054
+
+# List the application channels 
+channels:
+  airlinechannel:
+    orderers:
+      - orderer.airline.com
+    peers:
+      acme-peer1:
+      acme-peer2:
+      budget-peer1:
+

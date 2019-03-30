@@ -1,0 +1,34 @@
+# List all Peer orgaznizations
+organizations:
+  acme:
+    peers:
+      - acme-peer1:
+          url: grpc://localhost:7051
+          eventUrl: grpc://localhost:7051
+      - acme-peer2:
+          url: grpc://localhost:8051
+          eventUrl: grpc://localhost:8051
+  budget:
+    peers:
+      - budget-peer1:
+          url: grpc://localhost:9051
+          eventUrl: grpc://localhost:9051
+# List the orderer URL
+orderers:
+  orderer.airline.com:
+      url: grpc://localhost:7050
+# List teh CA 
+ca:
+  name: ca.server.com
+  url: http://localhost:7054
+
+# List the application channels 
+channels:
+  airlinechannel:
+    orderers:
+      - orderer.airline.com
+    peers:
+      acme-peer1:
+      acme-peer2:
+      budget-peer1:
+

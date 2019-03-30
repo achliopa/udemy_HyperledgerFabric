@@ -1,0 +1,3 @@
+[submodule "courseRepo/HLF-Workbench-v1.4-01/misc/fabric-samples"]
+	path = courseRepo/HLF-Workbench-v1.4-01/misc/fabric-samples
+	url = https://github.com/hyperledger/fabric-samples.git

@@ -1,12 +1,14 @@
 # Udemy Course #1: Blockchain Development on Hyperledger Fabric using Composer
 
 * [Course #1 Link](https://www.udemy.com/hyperledger/)
-* [Course #1 Repo](https://github.com/acloudfan/HLF-Vagrant-Dev-Setup)
+* [Course #1 Repo1](https://github.com/acloudfan/HLF-Vagrant-Dev-Setup)
+* [Course #1 Repo2](https://github.com/acloudfan/HLF-Course-Domain-Model)
+* [Course #1 Repo3](https://github.com/acloudfan/HLF-Fabric-API)
 
 # Udemy Course #2: Tutorial: Set up Multi Org Hyperledger Fabric Network
 
 * [Course #2 Link](https://www.udemy.com/tutorial-hyperledger-setup/)
-* [Course # 2 Repo]()
+* [Course # 2 Repo](http://www.acloudfan.com/download-files)
 
 # Course 1 - Blockchain Development on Hyperledger Fabric using Composer
 
@@ -2209,3 +2211,97 @@ composer participant add -d '{"$class":"org.acme.airline.participant.ACMENetwork
 	* Network administrator: Manage the application. Create new participants & Id
 	* Accounting department participant: Credit member accounts with reward points. Run reports on reward points
 	* Rewards Participant: Query the reward points. Transfer their reward points to other partners. Redeem their reward points for Acme Airline payments
+
+# Course 2 - Tutorial: Set up Multi Org Hyperledger Fabric Network
+
+## Section 1 - Introduction
+
+### Lecture 2 - Pre-Requisites for the course
+
+* Basic Understanding of HL Fabric components
+* Comforable with Bash scripting
+* Dev machine (8gb ram)
+* Fabric Workbench installation
+	* Directly on Host (Ubuntu 16.0.4 LTS)
+	* On VM (Ubuntu VM)
+* Better use VM (portability)
+
+## Section 2 - Case Study & Fabric Workbench Setup
+
+### Lecture 5 - Say Hello to Acme Airline
+
+* ACME Airlines built several BNapps on Hyperledger Fabric.
+* Developers used single org dev environment
+* Pilot was lauched and well received.
+* Good news: 
+	* A consortium of airlines was formed on exploring BNapps and blockchain potential (ACME AIRlines & Budger AIR)
+* Bad news:
+	* a lot of audience not convinced (pilot on dev env. can it scale on real world?)
+* Our Task: 
+	* Prove that ACME DLT apps will work on a real distributed cloud setup
+	* setup a demo to show how apps will work on a multi-org & multi-machine fabric structure
+* Our decision: Use HL Fabric Workbench to setup the Fabric on the Cloud
+
+### Lecture 6 - Fabric Workbench Overview
+
+* Fabric Workbench
+	* a collection of task automation scripts
+	* configurations files for various components
+	* utilities and tools
+	* ready to use fabric setups (single | multi | cloud)
+* Created by tutor to help students accelarate learning & experimentation
+	* To learn about HL Architecture components
+	* Test out & experiments with the configurations & code
+	* Design fabric infrastracture for your PoC/Apps
+	* Adress challenges with Composer Apps
+* If we have setup Fabric using the official tutorial (we have done it in Course 1) we have done it with docker setup. this is the default way to start with fabric
+* Docker hides a lot of underlying details on binaries and configuration that we have to understand to setup fabric infra on our own
+* With workbench we will work directly with native components instead of docker images
+* We will use shell scripts for common tasks automation
+* Workbench provides ready-to-use configurations
+* To use the Workbench we must be experienced with the Fabric dev environment
+* Workbench 
+	* does not have components for chaincode development
+	* does not create production ready infrastructure setup 
+	* no support for config updates to the network
+
+### Lecture 7 - Setup Visual Studio Code
+
+* set auto save: file => autho save
+* install extensions: vagrant, go, yaml support, docker
+
+### Lecture 8 - Hypervisor, Virtualization & Vagrant
+
+* we use vm setup of Oracle VMbox + Vagrant
+* Virtualization is software simulation of the physical hw
+* On physical machine sits hypervisor and on it the VMs
+* Our hypervisor of choice is Oracle VirtualBox. alternatives are:
+	* VMware vmsphere
+	* Windows hyper-v
+	* Redhat enterprise virtualization
+	* kvm
+	* xenserver
+* we have it
+* Vagrant a cli tool for managing vms. we have it
+* varant reads the vagrant file (config) => creates a vm using hypervisor => a new vm is created
+
+### Lecture 10 - Fabric workbench Project Setup
+
+* we have dowloaded the Project repo 'HLF-Workbench-v1.4-01' in /courseRepo
+* repository updated when new versions come. reinstallation of tools might be needed. code changes happen
+* in the repo (where vagrantfile is) we run `vagrant up` and to login we run `vagrant ssh`
+* in vm we will install
+	* docker
+	* fabric binaries
+	* ca server
+* we will install them using scripts in /vagrant/setup
+	* `cd vagrant/setup`
+	* `chmod 755 *.sh`
+	* install docker on vm `sudo ./docker.sh` => logout => login => check installation `docker version`
+	* install fabric binaries `sudo ./fabric-setup.sh`
+	* check successful installation of orderer `orderer version` and peer `peer version`
+	* install fabric ca server binary `sudo ./caserver-setup.sh` and check ca server and client  version `fabric-ca-server version` and `fabric-ca-client version`
+
+### Lecture 11 - Fabric Workbench Walk through
+
+* 
