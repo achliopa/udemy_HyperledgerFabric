@@ -2304,4 +2304,10 @@ composer participant add -d '{"$class":"org.acme.airline.participant.ACMENetwork
 
 ### Lecture 11 - Fabric Workbench Walk through
 
-* 
+* Workbench walkthrough
+	* workbench folder overview
+	* launch multi-org test setup
+	* cleanup test set-ups
+* HLF-Workbench has multiple folders
+	* 'bin' has fabric binaries installed witht he scripts
+	* 
