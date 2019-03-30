@@ -1972,4 +1972,102 @@ function createFlight(flightData){
 
 ### Lecture 84 - Application Design Patterns
 
+* We will see 4 Architectural Patterns for BNA Frontent Apps
+	* Composer Rest Server middleware
+	* Custom middleware
+	* Hybrid middleware
+	* Desktop app
+* in Composer Rest Server middleware pattern frontend is developed using web technologies (AngularJS, ReactJS etc). It is a WebApp interacting witht he Composer RestServer backend. the WebApp can interact with 3rd party enterprise systems etc
+* the only interesing part in this pattern for the course is how to consume the rest server api from a frontend app
+* Rest server must be secured
+	* HTTPS
+	* Authentication (PassengerJS)
+	* Must work in Multi-user mode
+* In custom middleware pattern the midtier is custom app
+	* if the custom app exposes CRUD operations to resources through its API it might lead to inconsistencies in the BNapp
+	* exposing a rest api to the users creates security issues
+	* card management is a challenge (in composer Rest server middleware cards are managed there. with the custom middleware we have the option of storing users cards on their filesystem or in the suctom middleware app)
+	* a custom middleware is typically built in node using the Composer API SDK
+* In hybrid middleware pattern
+	* the frontend never connects directly to the rest server. the wqeb app connects to the REST Server (loopback connector). the rest server can be in the enterprise network secured by firewalls.
+	* Pros: More secure architecture, simplified middle tier
+	* Cons: no moving parts, multi user mode still needed
+* In desktop application pattern:
+	* the app is installed on users machine and it connects to the BNApp directly using the Composer API (Fabric runtime)
+	* Pros: secure, trust, cards managed on users machine
+	* Cons: app distribution 
+	* typically it will be an ElectronJS app using JS to consume the API easily
+* How to decide on the best pattern to use.
+	* Requirements, User needs
+	* End user, audience 
+	* Security & trust criteria
+
+### Lecture 85 - Securing the REST server with Authentication Strategy
+
+* Securing the Composer REST Server:
+	* Enable HTTPS
+	* Enable authentication on RERST Server (passportJS)
+* Passport Auth Strategies are 300+ and  they are plugable modules.
+* Most commonly used are OAuth2, SAML and LDAP
+* There is also a Basic Auth Scheme and the Custom Auth Scheme. Basic is not recommended
+* OAuth2 is most common auth strategy fro WebApps and REST API security
+* OAuth2 Social Logic (Social media login) is not good as we have an Enterprise App to build
+* OAuth2 can use an Enterprise Identity Provider
+* OAuth2 strategy flow:
+	* User uses the app to connect to REST Server
+	* First call gets rejected and app redirects to LoginPAge (Auth page)
+	* Auth page will make an auth request to the IdentityProvider
+	* IdentityProvider upos successful signin or signup issues an access token to the App
+	* the token is added to requests to REST API which then get validated with passport runtime. if OK access to Fabric API is granted
+* LDAP strategy flow:
+	* User provides credentials to the App
+	* credential are passed to teh REST server
+	* Rest server passes credentials to passport runtime
+	* Passport connects to LDAP server to validate credentials
+	* It passes back a user profile obj to rest server
+	* Rest server manages the user profile obj to the session store (DB)
+	* Any api call from user gets validated from session store. if session is valid. req will go to fabric api
+
+### Lecture 86 - Walkthrough: Applying OAuth2.0 Authentication Strategy to REST Server
+
+* the code that shows how to setup composer REST server for Auth and multi-user mode is in '/HLF_UI_Development/bin/rs-auth-github.sh'
+* With OAuth2 + Github login wthe OAuth2 strategy is implemented. The login page is in GIthub and identity provider is Github
+* To setup OAuth2 for social authentication
+	* install the strategy package `npm install -g passport-github`
+	* register fror oAuth2.0 on github.com
+	* setup REST server launch script
+	* execute the launch script from command line
+
+* step2: login to github => settings => developer settings => register a new oauth app => give a name => give url 'http://localhost:3000/' => desc => provide callback url 'http://localhost:3000/auth/github/callback' => register app. => we get a client id and client secret
+* Step 3: 
+	* rest server is a CLI tool accepting options to control runtime behaviour. we have seen -c (card) -n (always | never) -w (true|false) -p (port)
+	* rest server can be initialized more easily with ENv variables passed in afile which replace the options. e.g 'COMPOSER_CARD' 'COMPOSER_NAMESPACES' 'COMPOSER_AUTHENTICATION'
+	* the environment variables for passport strategy are passed as 'COMPSOER_PROVIDERS' and a re passed as JSON formatted string, this is the place where we setup the keys (do not commit to github secrets). lso urls for auth flow are setup here
+* our script will be
+```
+export COMPOSER_CARD=admin@airlinev9
+export COMPOSER_NAMESPACES=never
+export COMPOSER_AUTHENTICATION=true
+export COMPOSER_PROVIDERS='{
+  "github": {
+    "provider": "github",
+    "module": "passport-github",
+    "clientID": "GITHUB CLIENT ID",
+    "clientSecret": "GITHUB CLIENT SECRET",
+    "authPath": "/auth/github",
+    "callbackURL": "/auth/github/callback",
+    "successRedirect": "/",
+    "failureRedirect": "/"
+  }
+}'
+composer-rest-server
+```
+* composer rest server is implemented using the loopback.io framewoirk. an easy way fro apps to expose their resources as REST APIs. the json format is dictated by loopback .io
+* STEP4: make script executable and laucn it (launvh fabric first...)
+* if we try to use ti we get 401 error (auth required) so we hit the auth url to login
+* we get authorized and beignredirected with a token. token will be included in each call
+* IT WORKS
+
+### Lecture 87 - Working of Multi User Enabled REST Server
+
 * 
